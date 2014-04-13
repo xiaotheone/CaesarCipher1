@@ -1,0 +1,31 @@
+the outline of app
+
+	1. Logging on the GTMRS
+	
+	2. New User Registration
+	
+	3. Profile Creation
+	
+	4. Patient Functionality
+		
+		4.1 Appointments
+		
+		4.2 Order Medication
+		
+		4.3 View Visit History
+		
+		4.4 Rate A doctor
+	
+	5. Doctor FUnctionality
+	
+		5.1 View Appointments
+		
+		5.2 Patient visits and Prescriptions
+		
+		5.3 Surgrery Records
+		
+	6. Communication 
+	
+	7. Billing
+	
+	8. Reports
