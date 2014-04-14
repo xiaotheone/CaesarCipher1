@@ -51,7 +51,7 @@ public class MainDrive {
 
 			}
 			System.out.println("Total user number: " + count);*/
-			LoginPanel.checkData(result);
+			LoginPanel.importResult(result);
 
 		} catch (SQLException e) {
 			System.err.println(e);
@@ -59,7 +59,7 @@ public class MainDrive {
 		
 		//close them in a finally block first, making sure that they're not null
 		//so that you don't cause yet another error
-		finally {
+		/*finally {
 			if (result != null) {
 				result.close();
 			}
@@ -69,6 +69,6 @@ public class MainDrive {
 			if (conn != null) {
 				conn.close();
 			}
-		}
+		}*/
 	}
 }

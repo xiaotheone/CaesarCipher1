@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -18,6 +19,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.UIManager;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 @SuppressWarnings("serial")
 public class LoginPanel extends JPanel {
 
@@ -27,9 +31,13 @@ public class LoginPanel extends JPanel {
 	private JTextField UserField2;
 	private JTextField PassworField2;
 	private JTextField confirmField_2;
+	private String inputName;
+	private String inputPass;
+	private static ResultSet localResult;
 
 	public LoginPanel() {
-
+		
+		
 		setSize(550, 450);
 		setLayout(null);
 
@@ -62,6 +70,21 @@ public class LoginPanel extends JPanel {
 		JButton btnNewButton = new JButton("Log In");
 		btnNewButton.setBounds(299, 208, 117, 29);
 		add(btnNewButton);
+		btnNewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				inputName = UsernameField.getText();
+				inputPass = PasswordField.getText();
+				
+					try {
+						checkData(localResult, inputName, inputPass);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+			
+			}
+		});
 
 		JButton btnNew = new JButton("Create Account");
 		btnNew.addActionListener(new ActionListener() {
@@ -73,8 +96,11 @@ public class LoginPanel extends JPanel {
 		});
 		btnNew.setBounds(96, 208, 125, 29);
 		add(btnNew);
-		
+
 		JLabel lblLogin = new JLabel("Login");
+		
+
+		
 		lblLogin.setBounds(246, 19, 35, 16);
 		add(lblLogin);
 		repaint();
@@ -137,21 +163,28 @@ public class LoginPanel extends JPanel {
 		add(RegisterButton);
 
 	}
-	
-	
-	public static void checkData(ResultSet rs) throws SQLException{
+
+	public static void importResult(ResultSet rs){
+		localResult = rs;
+		System.out.print("in transit");
+	}
+	public void checkData(ResultSet rs, String inputName, String inputPass) throws SQLException {
 		int count = 0;
-		while(rs.next()){
+		while (rs.next()) {
 			String userName = rs.getString("UserName");
-			
-			if (userName.equals("bchen80")){
-				System.out.println("Welcome, Bo Chen!");
+
+			if (userName.equals(inputName)) {
+				
+				JOptionPane.showMessageDialog(null, "Welcome to GTMR " + inputName);
+				System.out.println("Welcome, " + inputName);
 			}
-			
+			else{
+				System.out.println("nothing");
+			}
+
 			count += 1;
 		}
 		System.out.println("Total user number: " + count);
 	}
-	
-	
+
 }
