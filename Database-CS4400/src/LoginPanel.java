@@ -3,6 +3,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -10,8 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.UIManager;
 
 @SuppressWarnings("serial")
@@ -133,4 +137,21 @@ public class LoginPanel extends JPanel {
 		add(RegisterButton);
 
 	}
+	
+	
+	public static void checkData(ResultSet rs) throws SQLException{
+		int count = 0;
+		while(rs.next()){
+			String userName = rs.getString("UserName");
+			
+			if (userName.equals("bchen80")){
+				System.out.println("Welcome, Bo Chen!");
+			}
+			
+			count += 1;
+		}
+		System.out.println("Total user number: " + count);
+	}
+	
+	
 }

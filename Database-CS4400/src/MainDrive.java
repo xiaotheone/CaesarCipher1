@@ -44,13 +44,14 @@ public class MainDrive {
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			result = stmt.executeQuery("SELECT Username FROM User");
 			//result.last();
-			int count = 0;
-			while(result.next()){
+			//int count = 0;
+			/*while(result.next()){
 				count += 1;
 				System.out.println("Username: " + result.getString("Username"));
 
 			}
-			System.out.println("Total user number: " + count);
+			System.out.println("Total user number: " + count);*/
+			LoginPanel.checkData(result);
 
 		} catch (SQLException e) {
 			System.err.println(e);
