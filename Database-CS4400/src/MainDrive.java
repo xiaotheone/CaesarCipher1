@@ -46,9 +46,11 @@ public class MainDrive {
 			//result.last();
 			int count = 0;
 			while(result.next()){
+				count += 1;
 				System.out.println("Username: " + result.getString("Username"));
 
 			}
+			System.out.println("Total user number: " + count);
 
 		} catch (SQLException e) {
 			System.err.println(e);
