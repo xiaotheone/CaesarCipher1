@@ -36,7 +36,7 @@ public class MainDrive {
 		
 		mainFrame app = new mainFrame();
 		
-		//instantiate resources within a try block
+		/*//instantiate resources within a try block
 		try {
 			conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
 			//System.out.println("Connected...");
@@ -63,6 +63,6 @@ public class MainDrive {
 			if (conn != null) {
 				conn.close();
 			}
-		}
+		}*/
 	}
 }
