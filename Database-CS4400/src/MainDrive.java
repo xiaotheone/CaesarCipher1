@@ -18,10 +18,10 @@ import javax.swing.JPanel;
  */
 public class MainDrive {
 
-
-	private static final String USERNAME = "cs4400_Group_7";
-	private static final String PASSWORD = "AtJE4sFr";
-	private static final String CONN_STRING = "jdbc:mysql://academic-php.cc.gatech.edu/cs4400_Group_7";
+//
+//	private static final String USERNAME = "cs4400_Group_7";
+//	private static final String PASSWORD = "AtJE4sFr";
+//	private static final String CONN_STRING = "jdbc:mysql://academic-php.cc.gatech.edu/cs4400_Group_7";
 
 	/**
 	 * creating the main frame of the app
@@ -29,6 +29,9 @@ public class MainDrive {
 	 */
 	public static void main(String[] args) throws SQLException {
 
+		
+		ConnectionManager.getInstance();
+		
 		//declare your resources first and initially set them to null
 		Connection conn = null;
 		Statement stmt = null;
@@ -36,39 +39,27 @@ public class MainDrive {
 		
 		mainFrame app = new mainFrame();
 		
-		//instantiate resources within a try block
-		try {
-			conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-			System.out.println("Connected...");
-
-			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			result = stmt.executeQuery("SELECT Username FROM User");
-			//result.last();
-			//int count = 0;
-			/*while(result.next()){
-				count += 1;
-				System.out.println("Username: " + result.getString("Username"));
-
-			}
-			System.out.println("Total user number: " + count);*/
-			LoginPanel.importResult(result);
-
-		} catch (SQLException e) {
-			System.err.println(e);
-		} 
+//		//instantiate resources within a try block
+//		try {
+//			conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
+//			System.out.println("Connected...");
+//
+//			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//			result = stmt.executeQuery("SELECT Username FROM User");
+//			//result.last();
+//			//int count = 0;
+//			/*while(result.next()){
+//				count += 1;
+//				System.out.println("Username: " + result.getString("Username"));
+//
+//			}
+//			System.out.println("Total user number: " + count);*/
+//			LoginPanel.importResult(result);
+//
+//		} catch (SQLException e) {
+//			System.err.println(e);
+//		} 
 		
-		//close them in a finally block first, making sure that they're not null
-		//so that you don't cause yet another error
-		/*finally {
-			if (result != null) {
-				result.close();
-			}
-			if (stmt != null) {
-				stmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
-		}*/
+		ConnectionManager.getInstance().close();
 	}
 }

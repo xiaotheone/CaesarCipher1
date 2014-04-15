@@ -3,8 +3,10 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -19,12 +21,14 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.UIManager;
 
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 @SuppressWarnings("serial")
 public class LoginPanel extends JPanel {
 
+	private static Connection conn = ConnectionManager.getInstance().getConnection();
 	private JTextField UsernameField;
 	private JTextField PasswordField;
 	public static BufferedImage image;
@@ -33,10 +37,8 @@ public class LoginPanel extends JPanel {
 	private JTextField confirmField_2;
 	private String inputName;
 	private String inputPass;
-	private static ResultSet localResult;
 
 	public LoginPanel() {
-		
 		
 		setSize(550, 450);
 		setLayout(null);
@@ -76,13 +78,16 @@ public class LoginPanel extends JPanel {
 				inputName = UsernameField.getText();
 				inputPass = PasswordField.getText();
 				
-					try {
-						checkData(localResult, inputName, inputPass);
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				try {
+					if(checkUser(inputName, inputPass)){
+						
+					}else{
+						JOptionPane.showMessageDialog(getParent(), "No Match Found!");
 					}
-			
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -98,21 +103,17 @@ public class LoginPanel extends JPanel {
 		add(btnNew);
 
 		JLabel lblLogin = new JLabel("Login");
-		
-
-		
 		lblLogin.setBounds(246, 19, 35, 16);
 		add(lblLogin);
 		repaint();
 		setVisible(true);
-
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, null);
 	}
-
+	
 	public void RegisterPanel() {
 		setLayout(null);
 
@@ -161,30 +162,35 @@ public class LoginPanel extends JPanel {
 		JButton RegisterButton = new JButton("Register");
 		RegisterButton.setBounds(382, 251, 117, 29);
 		add(RegisterButton);
-
-	}
-
-	public static void importResult(ResultSet rs){
-		localResult = rs;
-		System.out.print("in transit");
-	}
-	public void checkData(ResultSet rs, String inputName, String inputPass) throws SQLException {
-		int count = 0;
-		while (rs.next()) {
-			String userName = rs.getString("UserName");
-
-			if (userName.equals(inputName)) {
+		RegisterButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				
-				JOptionPane.showMessageDialog(null, "Welcome to GTMR " + inputName);
-				System.out.println("Welcome, " + inputName);
 			}
-			else{
-				System.out.println("nothing");
-			}
-
-			count += 1;
-		}
-		System.out.println("Total user number: " + count);
+		});	
+		
 	}
+	
+	public boolean checkUser(String username, String password) throws SQLException{
+		String sql = "SELECT * FROM User WHERE Username = username AND Password = password";
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		try{
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			rs = stmt.executeQuery(sql);
+			
+			if(rs.getRow() == 1) {
+				System.out.println("Match Found");
+				return true;
+			}else{
+				System.out.println("Match not found!");
+				return false;
+			}
+		} catch (SQLException e){
+			System.err.println(e);	
+		}
+		return false;
+	}
+	
 
 }
