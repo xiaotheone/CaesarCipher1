@@ -21,7 +21,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.UIManager;
 
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -170,6 +169,18 @@ public class LoginPanel extends JPanel {
 		
 	}
 	
+	public boolean selectProfile(String username) throws SQLException{
+		String sql = "SELECT * FROM Patient WHERE Username = username";
+		Statement stmt = null;
+		ResultSet rs = null;
+		try{
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		} catch (SQLException e) {
+			System.err.println(e);			
+		}
+		
+		return false;
+	}
 	public boolean checkUser(String username, String password) throws SQLException{
 		String sql = "SELECT * FROM User WHERE Username = username AND Password = password";
 		Statement stmt = null;
@@ -178,7 +189,6 @@ public class LoginPanel extends JPanel {
 		try{
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery(sql);
-			
 			if(rs.getRow() == 1) {
 				System.out.println("Match Found");
 				return true;
