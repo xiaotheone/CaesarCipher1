@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -79,7 +80,11 @@ public class LoginPanel extends JPanel {
 				
 				try {
 					if(checkUser(inputName, inputPass)){
-						
+						if(selectProfile(inputName)){
+							System.out.println("log into patient profile page");
+						}else{
+							System.out.println("log into doctor profile page");
+						}
 					}else{
 						JOptionPane.showMessageDialog(getParent(), "No Match Found!");
 					}
@@ -168,13 +173,22 @@ public class LoginPanel extends JPanel {
 		});	
 		
 	}
-	
+	/*
+	 * select a profile panel. 
+	 */
 	public boolean selectProfile(String username) throws SQLException{
-		String sql = "SELECT * FROM Patient WHERE Username = username";
+		String sql = "SELECT * FROM Patient WHERE Patient Username = username";
 		Statement stmt = null;
 		ResultSet rs = null;
 		try{
+			// if the username is on patient table, return true
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			rs = stmt.executeQuery(sql);
+			if(rs.getRow() > -1 ){
+				return true;
+			}else{
+				return false;
+			}
 		} catch (SQLException e) {
 			System.err.println(e);			
 		}
@@ -189,7 +203,7 @@ public class LoginPanel extends JPanel {
 		try{
 			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			rs = stmt.executeQuery(sql);
-			if(rs.getRow() == 1) {
+			if(rs.getRow() > -1) {
 				System.out.println("Match Found");
 				return true;
 			}else{
