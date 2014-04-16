@@ -30,10 +30,10 @@ public class MainDrive {
 	public static void main(String[] args) throws SQLException {
 
 		
-		ConnectionManager.getInstance();
+		//ConnectionManager.getInstance();
 		
 		mainFrame app = new mainFrame();
 		
-		ConnectionManager.getInstance().close();
+		//ConnectionManager.getInstance().close();
 	}
 }

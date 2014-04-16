@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,14 +31,15 @@ import java.awt.event.MouseEvent;
 public class LoginPanel extends JPanel {
 
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
+	
 	private JTextField UsernameField;
-	private JTextField PasswordField;
+	private JPasswordField PasswordField;
 	public static BufferedImage image;
 	private JTextField UserField2;
-	private JTextField PassworField2;
+	private JPasswordField PassworField2;
 	private JTextField confirmField_2;
 	private String inputName;
-	private String inputPass;
+	private char[] inputPass;
 
 	public LoginPanel() {
 		
@@ -64,7 +67,7 @@ public class LoginPanel extends JPanel {
 		add(UsernameField);
 		UsernameField.setColumns(10);
 
-		PasswordField = new JTextField();
+		PasswordField = new JPasswordField();
 		PasswordField.setColumns(10);
 		PasswordField.setBounds(204, 169, 134, 28);
 		add(PasswordField);
@@ -76,15 +79,11 @@ public class LoginPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				inputName = UsernameField.getText();
-				inputPass = PasswordField.getText();
-				
+				inputPass = PasswordField.getPassword();
 				try {
 					if(checkUser(inputName, inputPass)){
-						if(selectProfile(inputName)){
-							System.out.println("log into patient profile page");
-						}else{
-							System.out.println("log into doctor profile page");
-						}
+						JOptionPane.showMessageDialog(getParent(), "Changing to user page");
+
 					}else{
 						JOptionPane.showMessageDialog(getParent(), "No Match Found!");
 					}
@@ -109,16 +108,16 @@ public class LoginPanel extends JPanel {
 		JLabel lblLogin = new JLabel("Login");
 		lblLogin.setBounds(246, 19, 35, 16);
 		add(lblLogin);
-		repaint();
-		setVisible(true);
 	}
 
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.drawImage(image, 0, 0, null);
-	}
+//	public void paintComponent(Graphics g) {
+//		super.paintComponent(g);
+//		g.drawImage(image, 0, 0, null);
+//		repaint();
+//	}
 	
-	public void RegisterPanel() {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public  void RegisterPanel() {
 		setLayout(null);
 
 		JLabel lblNewLabel = new JLabel("New User Registration");
@@ -146,7 +145,7 @@ public class LoginPanel extends JPanel {
 		add(UserField2);
 		UserField2.setColumns(10);
 
-		PassworField2 = new JTextField();
+		PassworField2 = new JPasswordField();
 		PassworField2.setColumns(10);
 		PassworField2.setBounds(164, 156, 200, 23);
 		add(PassworField2);
@@ -156,9 +155,10 @@ public class LoginPanel extends JPanel {
 		confirmField_2.setBounds(164, 185, 200, 23);
 		add(confirmField_2);
 		String[] userType = { "Administrator", "Doctor", "Patient" };
-		@SuppressWarnings("unchecked")
 		JComboBox comboType = new JComboBox(userType);
-		comboType.setBackground(UIManager.getColor("CheckBox.background"));
+		comboType.setToolTipText("Select user type");
+		comboType.setVisible(true);
+		comboType.setBackground(Color.WHITE);
 		comboType.setForeground(Color.BLACK);
 		comboType.setBounds(164, 217, 200, 27);
 		add(comboType);
@@ -173,6 +173,8 @@ public class LoginPanel extends JPanel {
 		});	
 		
 	}
+	
+	
 	/*
 	 * select a profile panel. 
 	 */
@@ -195,23 +197,34 @@ public class LoginPanel extends JPanel {
 		
 		return false;
 	}
-	public boolean checkUser(String username, String password) throws SQLException{
-		String sql = "SELECT * FROM User WHERE Username = username AND Password = password";
-		Statement stmt = null;
+
+	public boolean checkUser(String username, char[] password)
+			throws SQLException {
+
+		String sql = "SELECT * FROM User WHERE Username = ? ";
 		ResultSet rs = null;
-		
-		try{
-			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			rs = stmt.executeQuery(sql);
-			if(rs.getRow() > -1) {
-				System.out.println("Match Found");
-				return true;
-			}else{
-				System.out.println("Match not found!");
-				return false;
+
+		try (
+
+		PreparedStatement stmt = conn.prepareStatement(sql);) {
+
+			stmt.setString(1, username);
+			rs = stmt.executeQuery();
+
+			if (rs.next()) {
+
+				String tempPassword = rs.getString("Password");
+				if (tempPassword.equals(new String(password))) {
+					System.out.println("Welcome to GTMR " + username);
+					return true;
+				} else {
+					System.out.println("Wrong password, please try again");
+				}
+			} else {
+				System.out.println("Cannot find username, Please try again");
 			}
-		} catch (SQLException e){
-			System.err.println(e);	
+		} catch (SQLException e) {
+			System.err.println(e);
 		}
 		return false;
 	}

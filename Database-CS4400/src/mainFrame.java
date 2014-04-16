@@ -13,6 +13,6 @@ public class mainFrame extends JFrame{
 		setVisible(true);
 
 		add(new LoginPanel());
-		revalidate();
+		repaint();
 	}
 }
