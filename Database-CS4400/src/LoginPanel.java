@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,14 +16,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
-import javax.swing.UIManager;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 @SuppressWarnings("serial")
 public class LoginPanel extends JPanel {
@@ -82,10 +74,8 @@ public class LoginPanel extends JPanel {
 				inputPass = PasswordField.getPassword();
 				try {
 					if(checkUser(inputName, inputPass)){
-						JOptionPane.showMessageDialog(getParent(), "Changing to user page");
+						//change to different panel
 
-					}else{
-						JOptionPane.showMessageDialog(getParent(), "No Match Found!");
 					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -110,14 +100,14 @@ public class LoginPanel extends JPanel {
 		add(lblLogin);
 	}
 
-//	public void paintComponent(Graphics g) {
-//		super.paintComponent(g);
-//		g.drawImage(image, 0, 0, null);
-//		repaint();
-//	}
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(image, 0, 0, null);
+		repaint();
+	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public  void RegisterPanel() {
+	public  void RegisterPanel(){
 		setLayout(null);
 
 		JLabel lblNewLabel = new JLabel("New User Registration");
@@ -163,14 +153,25 @@ public class LoginPanel extends JPanel {
 		comboType.setBounds(164, 217, 200, 27);
 		add(comboType);
 
-		JButton RegisterButton = new JButton("Register");
-		RegisterButton.setBounds(382, 251, 117, 29);
-		add(RegisterButton);
-		RegisterButton.addActionListener(new ActionListener() {
+		JButton registerButton = new JButton("Register");
+		registerButton.setBounds(382, 251, 117, 29);
+		add(registerButton);
+		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 			}
 		});	
+		
+		JButton backButton = new JButton("Go Back");
+		backButton.setBounds(25, 251, 117, 29);
+		add(backButton);
+		backButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				removeAll();
+				add(new LoginPanel());
+				
+			}
+		});
 		
 	}
 	
@@ -215,19 +216,19 @@ public class LoginPanel extends JPanel {
 
 				String tempPassword = rs.getString("Password");
 				if (tempPassword.equals(new String(password))) {
-					System.out.println("Welcome to GTMR " + username);
+					
+					JOptionPane.showMessageDialog(getParent(), "Welcome to GTMR");
+
 					return true;
 				} else {
-					System.out.println("Wrong password, please try again");
+					JOptionPane.showMessageDialog(getParent(), "Wrong password, please try again");
 				}
 			} else {
-				System.out.println("Cannot find username, Please try again");
+				JOptionPane.showMessageDialog(getParent(), "Cannot find username, Please try again");
 			}
 		} catch (SQLException e) {
 			System.err.println(e);
 		}
 		return false;
 	}
-	
-
 }
