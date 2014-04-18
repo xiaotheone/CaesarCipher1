@@ -77,7 +77,9 @@ public class LoginPanel extends JPanel {
 				try {
 					if(checkUser(inputName, inputPass)){
 						//change to different panel
-
+						removeAll();
+						add(new PatientHomepagePanel());
+						repaint();
 					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
