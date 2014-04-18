@@ -11,6 +11,8 @@ import javax.swing.JSpinner;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * 
@@ -53,6 +55,18 @@ public class PatientCommunicationPanel extends JPanel{
 		JButton btnNewButton = new JButton("Send Message");
 		btnNewButton.setBounds(327, 252, 117, 29);
 		add(btnNewButton);
+		
+		JLabel lblBack = new JLabel("Back");
+		lblBack.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				removeAll();
+				add(new PatienProfilePanel());
+				repaint();
+			}
+		});
+		lblBack.setBounds(31, 265, 61, 16);
+		add(lblBack);
 		
 	}
 	public void paintComponent(Graphics g) {
