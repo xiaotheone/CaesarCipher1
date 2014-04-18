@@ -68,6 +68,10 @@ public class PatientCommunicationPanel extends JPanel{
 		lblBack.setBounds(31, 265, 61, 16);
 		add(lblBack);
 		
+		JLabel lblSendMessageTo = new JLabel("Send Message To Doctor");
+		lblSendMessageTo.setBounds(123, 22, 163, 16);
+		add(lblSendMessageTo);
+		
 	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
