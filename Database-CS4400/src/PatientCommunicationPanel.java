@@ -25,9 +25,12 @@ import java.awt.event.MouseEvent;
 @SuppressWarnings("serial")
 public class PatientCommunicationPanel extends JPanel{
 	
+	
 	public static BufferedImage image;
 	
 	public PatientCommunicationPanel() {
+		
+		setSize(550, 450);
 		setLayout(null);
 		
 		try {
@@ -37,23 +40,23 @@ public class PatientCommunicationPanel extends JPanel{
 		}
 		
 		JLabel lblNewLabel = new JLabel("Select");
-		lblNewLabel.setBounds(66, 54, 61, 16);
+		lblNewLabel.setBounds(66, 114, 61, 16);
 		add(lblNewLabel);
 		
 		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(160, 50, 126, 27);
+		comboBox.setBounds(170, 110, 126, 27);
 		add(comboBox);
 		
 		JLabel lblMessages = new JLabel("Message");
-		lblMessages.setBounds(66, 100, 61, 16);
+		lblMessages.setBounds(66, 154, 61, 16);
 		add(lblMessages);
 		
 		JTextArea textArea = new JTextArea();
-		textArea.setBounds(170, 100, 220, 121);
+		textArea.setBounds(170, 154, 266, 200);
 		add(textArea);
 		
 		JButton btnNewButton = new JButton("Send Message");
-		btnNewButton.setBounds(327, 252, 117, 29);
+		btnNewButton.setBounds(405, 390, 117, 29);
 		add(btnNewButton);
 		
 		JLabel lblBack = new JLabel("Back");
@@ -65,11 +68,11 @@ public class PatientCommunicationPanel extends JPanel{
 				repaint();
 			}
 		});
-		lblBack.setBounds(31, 265, 61, 16);
+		lblBack.setBounds(66, 395, 61, 16);
 		add(lblBack);
 		
 		JLabel lblSendMessageTo = new JLabel("Send Message To Doctor");
-		lblSendMessageTo.setBounds(123, 22, 163, 16);
+		lblSendMessageTo.setBounds(170, 22, 163, 16);
 		add(lblSendMessageTo);
 		
 	}
@@ -77,7 +80,16 @@ public class PatientCommunicationPanel extends JPanel{
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, null);
 		repaint();
-	}	
+	}
+	
+	/*
+	 * select names of all doctors
+	 */
+	public String[] doctorList(){
+		
+		return null;
+		
+	}
 }
 	
 	
