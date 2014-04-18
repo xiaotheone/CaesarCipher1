@@ -25,7 +25,7 @@ import java.awt.event.ActionEvent;
 public class LoginPanel extends JPanel {
 
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
-	
+	private int gf;
 	private JTextField UsernameField;
 	private JPasswordField PasswordField;
 	public static BufferedImage image;
