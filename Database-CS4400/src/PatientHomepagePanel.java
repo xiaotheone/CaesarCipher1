@@ -65,7 +65,6 @@ public class PatientHomepagePanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				removeAll();
 				add(new PatientCommunicationPanel());
-				repaint();
 				System.out.println("communication page");
 			}
 			
