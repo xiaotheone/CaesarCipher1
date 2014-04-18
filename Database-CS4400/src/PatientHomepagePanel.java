@@ -1,8 +1,14 @@
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+
+import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 
 /**
  * 
@@ -13,6 +19,9 @@ import java.awt.event.ActionEvent;
  *
  */
 public class PatientHomepagePanel extends JPanel{
+	
+	
+	public static BufferedImage image;
 	public PatientHomepagePanel() {
 		setLayout(null);
 		
@@ -20,32 +29,23 @@ public class PatientHomepagePanel extends JPanel{
 		lblPatientHomepage.setBounds(137, 27, 136, 16);
 		add(lblPatientHomepage);
 		
-		JButton btnNewButton = new JButton("Make Appointment");
-		btnNewButton.setBounds(26, 98, 171, 29);
-		add(btnNewButton);
-		
-		JButton btnViewVisitHistory = new JButton("View Visit History");
-		btnViewVisitHistory.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		JLabel lblEditProfile = new JLabel("Edit Profile");
+		lblEditProfile.setBounds(54, 114, 85, 16);
+		add(lblEditProfile);
+		lblEditProfile.addMouseListener(new MouseAdapter() {
+			
+			public void mouseClicked(MouseEvent e){
+				removeAll();
+				add(new PatienProfilePanel());
+				repaint();
 			}
+	
 		});
-		btnViewVisitHistory.setBounds(26, 143, 171, 29);
-		add(btnViewVisitHistory);
-		
-		JButton btnOrderMedication = new JButton("Order Medication");
-		btnOrderMedication.setBounds(26, 195, 171, 29);
-		add(btnOrderMedication);
-		
-		JButton btnCommunicate = new JButton("Communicate");
-		btnCommunicate.setBounds(26, 236, 171, 29);
-		add(btnCommunicate);
-		
-		JButton btnRateADcotor = new JButton("Rate A Doctor");
-		btnRateADcotor.setBounds(247, 98, 160, 29);
-		add(btnRateADcotor);
-		
-		JButton btnEditProfile = new JButton("Edit Profile");
-		btnEditProfile.setBounds(247, 143, 160, 29);
-		add(btnEditProfile);
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(image, 0, 0, null);
+		repaint();
 	}
 }
