@@ -40,7 +40,7 @@ public class LoginPanel extends JPanel {
 		setSize(550, 450);
 		setLayout(null);
 
-		setBackground(Color.WHITE);
+		//setBackground(Color.WHITE);
 
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
@@ -176,6 +176,10 @@ public class LoginPanel extends JPanel {
 								//swith to doctor profile creation
 							}else if (userType == 2) {
 								// swith to patient profile creation
+								
+								removeAll();
+								add(new PatienProfilePanel());
+								repaint();
 							}
 						}
 					} catch (SQLException e1) {

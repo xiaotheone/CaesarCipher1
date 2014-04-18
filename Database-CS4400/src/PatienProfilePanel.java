@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JSpinner;
 import javax.swing.JFormattedTextField;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 
 /**
  * 
@@ -20,10 +22,29 @@ import javax.swing.JFormattedTextField;
  *
  */
 public class PatienProfilePanel extends JPanel{
-	private JTextField textField;
-		
+	private JTextField nameField;
+	private JTextField birthdateField;
+	private JTextField addressField;
+	private JTextField homePhoneField;
+	private JTextField workPhoneField;
+	private JTextField weightField;
+	private JTextField heightField;
+	private JTextField incomeField;
+	private JTextField allergiesField;
+	public static BufferedImage image;
+
+	@SuppressWarnings("unchecked")
 	public PatienProfilePanel() {
+		
+		try {
+			image = ImageIO.read(new File("Images/buzz.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+		}
+		
+		setSize(550, 450);
 		setLayout(null);
+		setVisible(true);
 		
 		JLabel lblPatientName = new JLabel("Patient Name:");
 		lblPatientName.setBounds(87, 66, 97, 10);
@@ -69,10 +90,68 @@ public class PatienProfilePanel extends JPanel{
 		lblAllergies.setBounds(87, 308, 85, 16);
 		add(lblAllergies);
 		
-		textField = new JTextField();
-		textField.setBounds(241, 57, 134, 28);
-		add(textField);
-		textField.setColumns(10);
+		nameField = new JTextField();
+		nameField.setBounds(241, 57, 134, 28);
+		add(nameField);
+		nameField.setColumns(10);
+		
+		birthdateField = new JTextField();
+		birthdateField.setToolTipText("format:1990-01-01");
+		birthdateField.setColumns(10);
+		birthdateField.setBounds(241, 82, 134, 28);
+		add(birthdateField);
+		
+		addressField = new JTextField();
+		addressField.setColumns(10);
+		addressField.setBounds(241, 134, 134, 28);
+		add(addressField);
+		
+		homePhoneField = new JTextField();
+		homePhoneField.setColumns(10);
+		homePhoneField.setBounds(241, 162, 134, 28);
+		add(homePhoneField);
+		
+		workPhoneField = new JTextField();
+		workPhoneField.setColumns(10);
+		workPhoneField.setBounds(241, 190, 134, 28);
+		add(workPhoneField);
+		
+		weightField = new JTextField();
+		weightField.setColumns(10);
+		weightField.setBounds(241, 218, 134, 28);
+		add(weightField);
+		
+		heightField = new JTextField();
+		heightField.setColumns(10);
+		heightField.setBounds(241, 246, 134, 28);
+		add(heightField);
+		
+		incomeField = new JTextField();
+		incomeField.setColumns(10);
+		incomeField.setBounds(241, 274, 134, 28);
+		add(incomeField);
+		
+		allergiesField = new JTextField();
+		allergiesField.setColumns(10);
+		allergiesField.setBounds(241, 302, 134, 28);
+		add(allergiesField);
+		
+		JButton btnSubmit = new JButton("Submit");
+		btnSubmit.setBounds(357, 342, 117, 29);
+		add(btnSubmit);
+		
+		String[] gender = {"Male", "Female"};
+		JComboBox genderComboBox = new JComboBox(gender);
+		genderComboBox.setBounds(241, 108, 134, 27);
+		add(genderComboBox);
 
 	}
+
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(image, 0, 0, null);
+		repaint();
+	}
 }
+
+	
