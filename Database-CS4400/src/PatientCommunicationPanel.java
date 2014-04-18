@@ -1,3 +1,9 @@
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
@@ -14,9 +20,19 @@ import javax.swing.JButton;
  * @author hailin
  *
  */
+@SuppressWarnings("serial")
 public class PatientCommunicationPanel extends JPanel{
+	
+	public static BufferedImage image;
+	
 	public PatientCommunicationPanel() {
 		setLayout(null);
+		
+		try {
+			image = ImageIO.read(new File("Images/buzz.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+		}
 		
 		JLabel lblNewLabel = new JLabel("Select");
 		lblNewLabel.setBounds(66, 54, 61, 16);
@@ -37,5 +53,13 @@ public class PatientCommunicationPanel extends JPanel{
 		JButton btnNewButton = new JButton("Send Message");
 		btnNewButton.setBounds(327, 252, 117, 29);
 		add(btnNewButton);
+		
 	}
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(image, 0, 0, null);
+		repaint();
+	}	
 }
+	
+	

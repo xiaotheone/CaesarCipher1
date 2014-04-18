@@ -1,3 +1,4 @@
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -5,11 +6,10 @@ import javax.swing.JButton;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+
 import java.awt.image.BufferedImage;
-import javax.swing.JTextField;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * 
@@ -21,17 +21,18 @@ import javax.swing.JTextField;
  */
 public class PatientHomepagePanel extends JPanel{
 	
-	
 	public static BufferedImage image;
+	
 	public PatientHomepagePanel() {
+		setSize(550, 450);
 		setLayout(null);
 		
 		JLabel lblPatientHomepage = new JLabel("Patient Homepage");
-		lblPatientHomepage.setBounds(137, 27, 136, 16);
+		lblPatientHomepage.setBounds(214, 25, 136, 16);
 		add(lblPatientHomepage);
 		
 		JButton btnMakeAppointment = new JButton("Make Appointment");
-		btnMakeAppointment.setBounds(26, 67, 150, 35);
+		btnMakeAppointment.setBounds(74, 103, 150, 35);
 		add(btnMakeAppointment);
 		
 		JButton btnViewVisitHistory = new JButton("View Visit History");
@@ -39,7 +40,7 @@ public class PatientHomepagePanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnViewVisitHistory.setBounds(26, 114, 150, 35);
+		btnViewVisitHistory.setBounds(74, 163, 150, 35);
 		add(btnViewVisitHistory);
 		
 		JButton btnOrderMedication = new JButton("Order Medication");
@@ -47,39 +48,57 @@ public class PatientHomepagePanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnOrderMedication.setBounds(26, 161, 150, 35);
+		btnOrderMedication.setBounds(74, 219, 150, 35);
 		add(btnOrderMedication);
 		
 		JButton btnCommunicate = new JButton("Communicate");
-		btnCommunicate.setBounds(26, 207, 150, 35);
+		btnCommunicate.setBounds(74, 279, 150, 35);
 		add(btnCommunicate);
+		btnCommunicate.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				add(new PatientCommunicationPanel());
+				repaint();
+				System.out.println("communication page");
+			}
+			
+		});
 		
 		JButton RateaDoctor = new JButton("Rate A Doctor");
 		RateaDoctor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		RateaDoctor.setBounds(236, 70, 150, 35);
+		RateaDoctor.setBounds(321, 103, 150, 35);
 		add(RateaDoctor);
 		
 		JButton btnEditProfile = new JButton("Edit Profile");
-		btnEditProfile.setBounds(236, 114, 150, 35);
+		btnEditProfile.setBounds(321, 163, 150, 35);
 		add(btnEditProfile);
 		btnEditProfile.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				removeAll();
 				add(new PatienProfilePanel());
 				repaint();
+
 			}
 			
 		});
 		
-		JButton btnUnreadmessages = new JButton("UnreadMessages");
-		btnUnreadmessages.setBounds(236, 161, 150, 35);
+		JButton btnUnreadmessages = new JButton("Unread Messages");
+		btnUnreadmessages.setBounds(321, 219, 150, 35);
 		add(btnUnreadmessages);
+		
+		
+		try {
+			image = ImageIO.read(new File("Images/buzz.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+		}
 	}
 	
 	public void paintComponent(Graphics g) {
