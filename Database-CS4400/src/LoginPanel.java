@@ -174,6 +174,10 @@ public class LoginPanel extends JPanel {
 							
 							if (userType == 1) {
 								//swith to doctor profile creation
+								
+								removeAll();
+								add(new DoctorProfilePanel());
+								repaint();
 							}else if (userType == 2) {
 								// swith to patient profile creation
 								
