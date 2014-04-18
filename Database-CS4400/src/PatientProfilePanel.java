@@ -23,7 +23,7 @@ import javax.swing.JComboBox;
  * @author hailin
  *
  */
-public class PatienProfilePanel extends JPanel{
+public class PatientProfilePanel extends JPanel{
 	private JTextField nameField;
 	private JTextField birthdateField;
 	private JTextField addressField;
@@ -36,7 +36,7 @@ public class PatienProfilePanel extends JPanel{
 	public static BufferedImage image;
 
 	@SuppressWarnings("unchecked")
-	public PatienProfilePanel() {
+	public PatientProfilePanel() {
 		
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
@@ -46,7 +46,6 @@ public class PatienProfilePanel extends JPanel{
 		
 		setSize(550, 450);
 		setLayout(null);
-		//setVisible(true);
 		
 		JLabel lblPatientName = new JLabel("Patient Name:");
 		lblPatientName.setBounds(87, 81, 97, 10);

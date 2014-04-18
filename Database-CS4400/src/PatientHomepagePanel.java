@@ -86,7 +86,7 @@ public class PatientHomepagePanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				removeAll();
-				add(new PatienProfilePanel());
+				add(new PatientProfilePanel());
 				repaint();
 
 			}

@@ -76,30 +76,26 @@ public class LoginPanel extends JPanel {
 				inputPass = new String(PasswordField.getPassword());
 				try {
 					if (checkUser(inputName, inputPass)) {
-						// change to different panel
+						// change to different panel， get into create profile
 						removeAll();
-						add(new PatientHomepagePanel());
-						repaint();
-					}
+						//add(new PatientProfilePanel());
+						int type = checkUserType(inputName);
+						switch (type) {
+						case 0:
+							removeAll();
+							add(new AdminHomepage());
+							break;
+						case 1:
+							removeAll();
+							add(new PatientHomepagePanel());
+							break;
+						case 2:
+							removeAll();
+							add(new DoctorHomePage());
+							break;
 
-					int type = checkUserType(inputName);
-					switch (type) {
-					case 0:
-						removeAll();
-						add(new AdminHomepage());
-						break;
-					case 1:
-						removeAll();
-						add(new PatientHomepagePanel());
-						repaint();
-						break;
-					case 2:
-						removeAll();
-						add(new DoctorHomePage());
-						repaint();
-						break;
-
-					}
+						}
+					}					
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -203,7 +199,7 @@ public class LoginPanel extends JPanel {
 								// swith to patient profile creation
 								
 								removeAll();
-								add(new PatienProfilePanel());
+								add(new PatientProfilePanel());
 								repaint();
 							}
 						}
@@ -250,9 +246,12 @@ public class LoginPanel extends JPanel {
 			rs1 = stmt1.executeQuery();
 			rs2 = stmt2.executeQuery();
 
-			if (rs1.getRow() > -1){
+			if (rs1.next()){
+				System.out.println("this a patient");
+
 				return 1;
-			}else if (rs2.getRow() > -1) {
+			}else if (rs2.next()) {
+				System.out.println("this a doctor");
 				return 2;
 			}
 		} catch (SQLException e) {
