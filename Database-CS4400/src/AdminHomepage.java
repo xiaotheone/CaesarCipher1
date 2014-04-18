@@ -6,8 +6,11 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+
 import java.awt.Font;
+
 import javax.swing.JButton;
+
 import java.awt.Color;
 
 /**
@@ -22,6 +25,8 @@ public class AdminHomepage extends JPanel{
 
 	public AdminHomepage(){		
 		
+		System.out.println("into admin page");
+
 		setSize(550, 450);
 		setLayout(null);
 		

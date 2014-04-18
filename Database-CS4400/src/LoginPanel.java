@@ -33,7 +33,7 @@ public class LoginPanel extends JPanel {
 	private JPasswordField PassworField2;
 	private JPasswordField confirmField_2;
 	private String inputName;
-	private char[] inputPass;
+	private String inputPass;
 
 	public LoginPanel() {
 		
@@ -73,13 +73,32 @@ public class LoginPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				inputName = UsernameField.getText();
-				inputPass = PasswordField.getPassword();
+				inputPass = new String(PasswordField.getPassword());
 				try {
-					if(checkUser(inputName, inputPass)){
-						//change to different panel
+					if (checkUser(inputName, inputPass)) {
+						// change to different panel
 						removeAll();
 						add(new PatientHomepagePanel());
 						repaint();
+					}
+
+					int type = checkUserType(inputName);
+					switch (type) {
+					case 0:
+						removeAll();
+						add(new AdminHomepage());
+						break;
+					case 1:
+						removeAll();
+						add(new PatientHomepagePanel());
+						repaint();
+						break;
+					case 2:
+						removeAll();
+						add(new DoctorHomePage());
+						repaint();
+						break;
+
 					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -215,24 +234,31 @@ public class LoginPanel extends JPanel {
 	/*
 	 * select a profile panel. 
 	 */
-	public boolean selectProfile(String username) throws SQLException{
-		String sql = "SELECT * FROM Patient WHERE Patient Username = username";
-		Statement stmt = null;
-		ResultSet rs = null;
-		try{
-			// if the username is on patient table, return true
-			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			rs = stmt.executeQuery(sql);
-			if(rs.getRow() > -1 ){
-				return true;
-			}else{
-				return false;
+	public int checkUserType(String username) throws SQLException{
+		String sql1 = "SELECT * FROM Patient WHERE 'Patient Username' = ?";
+		String sql2 = "SELECT * FROM Doctor WHERE 'Doc Username' = ?";
+		ResultSet rs1 = null;
+		ResultSet rs2 = null;
+		
+		try (
+				PreparedStatement stmt1 = conn.prepareStatement(sql1);
+				PreparedStatement stmt2 = conn.prepareStatement(sql2);) {
+
+			// if the username is on patient table, return 1, doctor return 2
+			stmt1.setString(1, username);
+			stmt2.setString(1, username);
+			rs1 = stmt1.executeQuery();
+			rs2 = stmt2.executeQuery();
+
+			if (rs1.getRow() > -1){
+				return 1;
+			}else if (rs2.getRow() > -1) {
+				return 2;
 			}
 		} catch (SQLException e) {
-			System.err.println(e);			
+			System.err.println(e);
 		}
-		
-		return false;
+		return 0;
 	}
 
 	/**
@@ -243,7 +269,7 @@ public class LoginPanel extends JPanel {
 	 * @return true if user input right account info else return false
 	 * @throws SQLException
 	 */
-	public boolean checkUser(String username, char[] password)
+	public boolean checkUser(String username, String password)
 			throws SQLException {
 
 		String sql = "SELECT * FROM User WHERE Username = ? ";
@@ -259,7 +285,7 @@ public class LoginPanel extends JPanel {
 			if (rs.next()) {
 
 				String tempPassword = rs.getString("Password");
-				if (tempPassword.equals(new String(password))) {
+				if (tempPassword.equals(password)) {
 					
 					JOptionPane.showMessageDialog(getParent(), "Welcome to GTMR");
 
