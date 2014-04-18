@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -16,6 +17,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -29,7 +31,7 @@ public class LoginPanel extends JPanel {
 	public static BufferedImage image;
 	private JTextField UserField2;
 	private JPasswordField PassworField2;
-	private JTextField confirmField_2;
+	private JPasswordField confirmField_2;
 	private String inputName;
 	private char[] inputPass;
 
@@ -140,12 +142,12 @@ public class LoginPanel extends JPanel {
 		PassworField2.setBounds(164, 156, 200, 23);
 		add(PassworField2);
 
-		confirmField_2 = new JTextField();
+		confirmField_2 = new JPasswordField();
 		confirmField_2.setColumns(10);
 		confirmField_2.setBounds(164, 185, 200, 23);
 		add(confirmField_2);
 		String[] userType = { "Administrator", "Doctor", "Patient" };
-		JComboBox comboType = new JComboBox(userType);
+		final JComboBox comboType = new JComboBox(userType);
 		comboType.setToolTipText("Select user type");
 		comboType.setVisible(true);
 		comboType.setBackground(Color.WHITE);
@@ -158,7 +160,32 @@ public class LoginPanel extends JPanel {
 		add(registerButton);
 		registerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String newName = UserField2.getText();
+				String firstPassword = new String(PassworField2.getPassword());
+				String confirmPassword = new String(confirmField_2.getPassword());
+				int userType = comboType.getSelectedIndex();
 				
+				//compare two input password, if same go ahead create account
+				if (firstPassword.equals(confirmPassword)) {
+					
+					try {
+						if (userRegistration(newName, firstPassword)) {
+							System.out.println("Successfule create user, going to profile page");
+							
+							if (userType == 1) {
+								//swith to doctor profile creation
+							}else if (userType == 2) {
+								// swith to patient profile creation
+							}
+						}
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				} else {
+					JOptionPane.showMessageDialog(getParent(), "password not match, try again");
+				}
 			}
 		});	
 		
@@ -174,8 +201,7 @@ public class LoginPanel extends JPanel {
 		});
 		
 	}
-	
-	
+
 	/*
 	 * select a profile panel. 
 	 */
@@ -199,6 +225,14 @@ public class LoginPanel extends JPanel {
 		return false;
 	}
 
+	/**
+	 * this method is checking the user's input username and password
+	 * by using SQL
+	 * @param username	username input
+	 * @param password	password input
+	 * @return true if user input right account info else return false
+	 * @throws SQLException
+	 */
 	public boolean checkUser(String username, char[] password)
 			throws SQLException {
 
@@ -231,4 +265,39 @@ public class LoginPanel extends JPanel {
 		}
 		return false;
 	}
+	
+	/**
+	 * The method is helping user to register a new account
+	 * @param newName	 input username
+	 * @param password	 input password
+	 */
+	protected boolean userRegistration(String newName, String password) throws SQLException{
+		String SQL = "INSERT into User VALUES (?, ?)";
+		ResultSet rs = null;
+		
+		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
+			
+			//setting variables
+			stmt.setString(1, newName);
+			stmt.setString(2, password);
+			
+			int affected = stmt.executeUpdate();
+			
+			if (affected == 1) {
+				System.out.println("data successful import");
+				return true;
+			} else {
+				System.err.println("no row affected!!");
+				return false;
+			}
+			
+		} catch (SQLException e) {
+			// TODO: handle exception
+			System.err.println(e);
+			return false;
+		}
+		
+		
+	}
+	
 }
