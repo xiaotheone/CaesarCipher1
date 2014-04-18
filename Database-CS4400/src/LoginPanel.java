@@ -80,6 +80,7 @@ public class LoginPanel extends JPanel {
 						removeAll();
 						//add(new PatientProfilePanel());
 						int type = checkUserType(inputName);
+
 						switch (type) {
 						case 0:
 							removeAll();
@@ -231,10 +232,9 @@ public class LoginPanel extends JPanel {
 	 * select a profile panel. 
 	 */
 	public int checkUserType(String username) throws SQLException{
-		String sql1 = "SELECT * FROM Patient WHERE 'Patient Username' = ?";
-		String sql2 = "SELECT * FROM Doctor WHERE 'Doc Username' = ?";
-		ResultSet rs1 = null;
-		ResultSet rs2 = null;
+		String sql1 = "SELECT * FROM Patient WHERE PatientUsername = ?";
+		String sql2 = "SELECT * FROM Doctor WHERE DocUsername = ?";
+		
 		
 		try (
 				PreparedStatement stmt1 = conn.prepareStatement(sql1);
@@ -243,14 +243,17 @@ public class LoginPanel extends JPanel {
 			// if the username is on patient table, return 1, doctor return 2
 			stmt1.setString(1, username);
 			stmt2.setString(1, username);
-			rs1 = stmt1.executeQuery();
-			rs2 = stmt2.executeQuery();
-
+			
+			ResultSet rs1 = stmt1.executeQuery();
+			ResultSet rs2 = stmt2.executeQuery();
+			
+			
 			if (rs1.next()){
 				System.out.println("this a patient");
 
 				return 1;
-			}else if (rs2.next()) {
+			}
+			if (rs2.next()) {
 				System.out.println("this a doctor");
 				return 2;
 			}
