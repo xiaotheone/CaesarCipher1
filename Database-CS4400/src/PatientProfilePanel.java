@@ -4,7 +4,11 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -24,6 +28,10 @@ import javax.swing.JComboBox;
  *
  */
 public class PatientProfilePanel extends JPanel{
+	
+
+	private static Connection conn = ConnectionManager.getInstance().getConnection();
+
 	private JTextField nameField;
 	private JTextField birthdateField;
 	private JTextField addressField;
@@ -140,6 +148,11 @@ public class PatientProfilePanel extends JPanel{
 		JButton btnSubmit = new JButton("Submit");
 		btnSubmit.setBounds(383, 393, 117, 29);
 		add(btnSubmit);
+		btnSubmit.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+			}
+		});
 		
 		String[] gender = {"Male", "Female"};
 		JComboBox genderComboBox = new JComboBox(gender);
@@ -159,6 +172,15 @@ public class PatientProfilePanel extends JPanel{
 
 	}
 
+	public void createPatientProfile() throws SQLException{
+		String SQL="INSERT INTO Patient VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		ResultSet rs =null;
+		
+		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
+		
+		}
+			
+		}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, null);
