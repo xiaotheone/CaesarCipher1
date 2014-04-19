@@ -112,6 +112,13 @@ public class PatientCommunicationPanel extends JPanel{
 		return docNames;
 		
 	}
+	
+	/*
+	 * insert into message to doctor table
+	 */
+	public void sendMessage() throws SQLException{
+		String SQL = "INSERT INTO Sends_messageToDoc VALUES (?, ?, ?, ?, ?)";
+	}
 }
 	
 	
