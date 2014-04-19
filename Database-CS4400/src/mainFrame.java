@@ -7,7 +7,7 @@ public class mainFrame extends JFrame{
 	public mainFrame(){
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(550, 450);
+		setSize(650, 550);
 		setTitle("GTMR");
 		setResizable(true);
 		setVisible(true);

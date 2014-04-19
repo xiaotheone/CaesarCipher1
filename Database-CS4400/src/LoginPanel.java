@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 public class LoginPanel extends JPanel {
 
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
-	private int gf;
 	private JTextField UsernameField;
 	private JPasswordField PasswordField;
 	public static BufferedImage image;
@@ -37,7 +36,7 @@ public class LoginPanel extends JPanel {
 
 	public LoginPanel() {
 		
-		setSize(550, 450);
+		setSize(650, 550);
 		setLayout(null);
 
 		//setBackground(Color.WHITE);
@@ -76,7 +75,7 @@ public class LoginPanel extends JPanel {
 				inputPass = new String(PasswordField.getPassword());
 				try {
 					if (checkUser(inputName, inputPass)) {
-						// change to different panel， get into create profile
+						// change to different panel get into create profile
 						removeAll();
 						//add(new PatientProfilePanel());
 						int type = checkUserType(inputName);
@@ -184,7 +183,7 @@ public class LoginPanel extends JPanel {
 				int userType = comboType.getSelectedIndex();
 				
 				//compare two input password, if same go ahead create account
-				if (firstPassword.equals(confirmPassword)) {
+				if (firstPassword.equals(confirmPassword) & firstPassword.length()>1) {
 					
 					try {
 						if (userRegistration(newName, firstPassword)) {
@@ -200,7 +199,10 @@ public class LoginPanel extends JPanel {
 								// swith to patient profile creation
 								
 								removeAll();
-								add(new PatientProfilePanel());
+								PatientProfilePanel p = new PatientProfilePanel();
+								add(p);
+								p.patientUsername= newName;
+								
 								repaint();
 							}
 						}
@@ -210,7 +212,7 @@ public class LoginPanel extends JPanel {
 					}
 					
 				} else {
-					JOptionPane.showMessageDialog(getParent(), "password not match, try again");
+					JOptionPane.showMessageDialog(getParent(), "password not match, try again or is too short");
 				}
 			}
 		});	

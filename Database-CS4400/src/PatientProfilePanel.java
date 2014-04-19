@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -31,7 +32,7 @@ public class PatientProfilePanel extends JPanel{
 	
 
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
-
+	
 	private JTextField nameField;
 	private JTextField birthdateField;
 	private JTextField addressField;
@@ -41,7 +42,11 @@ public class PatientProfilePanel extends JPanel{
 	private JTextField heightField;
 	private JTextField incomeField;
 	private JTextField allergiesField;
+	protected String patientUsername;
 	public static BufferedImage image;
+	private JComboBox genderComboBox;
+	private JTextField emergencynameTextFiled;
+	private JTextField emergencyPhoneTextFiled;
 
 	@SuppressWarnings("unchecked")
 	public PatientProfilePanel() {
@@ -52,116 +57,139 @@ public class PatientProfilePanel extends JPanel{
 			// TODO Auto-generated catch block
 		}
 		
-		setSize(550, 450);
+		setSize(650, 550);
 		setLayout(null);
 		
 		JLabel lblPatientName = new JLabel("Patient Name:");
-		lblPatientName.setBounds(87, 81, 97, 10);
+		lblPatientName.setBounds(92, 72, 97, 10);
 		add(lblPatientName);
 		
 		JLabel lblPatientProfile = new JLabel("Patient Profile");
-		lblPatientProfile.setBounds(195, 22, 105, 28);
+		lblPatientProfile.setBounds(190, 24, 105, 28);
 		add(lblPatientProfile);
 		
 		JLabel lblDateOfBirth = new JLabel("Date of Birth:");
-		lblDateOfBirth.setBounds(87, 103, 85, 16);
+		lblDateOfBirth.setBounds(92, 94, 85, 16);
 		add(lblDateOfBirth);
 		
 		JLabel lblGender = new JLabel("Gender:");
-		lblGender.setBounds(87, 138, 61, 16);
+		lblGender.setBounds(92, 129, 61, 16);
 		add(lblGender);
 		
 		JLabel lblAddress = new JLabel("Address:");
-		lblAddress.setBounds(87, 168, 61, 16);
+		lblAddress.setBounds(92, 159, 61, 16);
 		add(lblAddress);
 		
 		JLabel lblHomePhone = new JLabel("Home Phone:");
-		lblHomePhone.setBounds(87, 200, 97, 16);
+		lblHomePhone.setBounds(92, 191, 97, 16);
 		add(lblHomePhone);
 		
 		JLabel lblWorkPhone = new JLabel("Work Phone:");
-		lblWorkPhone.setBounds(87, 237, 85, 16);
+		lblWorkPhone.setBounds(92, 228, 85, 16);
 		add(lblWorkPhone);
 		
 		JLabel lblWeight = new JLabel("Weight:");
-		lblWeight.setBounds(87, 265, 61, 16);
+		lblWeight.setBounds(92, 256, 61, 16);
 		add(lblWeight);
 		
 		JLabel lblHeight = new JLabel("Height:");
-		lblHeight.setBounds(87, 295, 61, 16);
+		lblHeight.setBounds(92, 286, 61, 16);
 		add(lblHeight);
 		
 		JLabel lblAnnualIncome = new JLabel("Annual Income:");
-		lblAnnualIncome.setBounds(87, 328, 112, 16);
+		lblAnnualIncome.setBounds(92, 319, 112, 16);
 		add(lblAnnualIncome);
 		
 		JLabel lblAllergies = new JLabel("Allergies:");
-		lblAllergies.setBounds(87, 360, 85, 16);
+		lblAllergies.setBounds(92, 351, 85, 16);
 		add(lblAllergies);
 		
 		nameField = new JTextField();
-		nameField.setBounds(241, 72, 134, 28);
+		nameField.setBounds(246, 63, 134, 28);
 		add(nameField);
 		nameField.setColumns(10);
 		
 		birthdateField = new JTextField();
 		birthdateField.setToolTipText("format:1990-01-01");
 		birthdateField.setColumns(10);
-		birthdateField.setBounds(241, 103, 134, 28);
+		birthdateField.setBounds(246, 94, 134, 28);
 		add(birthdateField);
 		
 		addressField = new JTextField();
 		addressField.setColumns(10);
-		addressField.setBounds(241, 162, 134, 28);
+		addressField.setBounds(246, 153, 134, 28);
 		add(addressField);
 		
 		homePhoneField = new JTextField();
 		homePhoneField.setColumns(10);
-		homePhoneField.setBounds(241, 194, 134, 28);
+		homePhoneField.setBounds(246, 185, 134, 28);
 		add(homePhoneField);
 		
 		workPhoneField = new JTextField();
 		workPhoneField.setColumns(10);
-		workPhoneField.setBounds(241, 228, 134, 28);
+		workPhoneField.setBounds(246, 219, 134, 28);
 		add(workPhoneField);
 		
 		weightField = new JTextField();
 		weightField.setColumns(10);
-		weightField.setBounds(241, 259, 134, 28);
+		weightField.setBounds(246, 250, 134, 28);
 		add(weightField);
 		
 		heightField = new JTextField();
 		heightField.setColumns(10);
-		heightField.setBounds(241, 289, 134, 28);
+		heightField.setBounds(246, 280, 134, 28);
 		add(heightField);
 		
 		incomeField = new JTextField();
 		incomeField.setColumns(10);
-		incomeField.setBounds(241, 322, 134, 28);
+		incomeField.setBounds(246, 313, 134, 28);
 		add(incomeField);
 		
 		allergiesField = new JTextField();
 		allergiesField.setColumns(10);
-		allergiesField.setBounds(241, 354, 134, 28);
+		allergiesField.setBounds(246, 345, 134, 28);
 		add(allergiesField);
 		
 		JButton btnSubmit = new JButton("Submit");
-		btnSubmit.setBounds(383, 393, 117, 29);
+		btnSubmit.setBounds(398, 439, 117, 29);
 		add(btnSubmit);
 		btnSubmit.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				
+				try {
+					createPatientProfile();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
 		String[] gender = {"Male", "Female"};
-		JComboBox genderComboBox = new JComboBox(gender);
-		genderComboBox.setBounds(241, 134, 134, 27);
+	    genderComboBox = new JComboBox(gender);
+		genderComboBox.setBounds(246, 125, 134, 27);
 		add(genderComboBox);
 		
 		JButton btnGoBack = new JButton("GO BACK");
-		btnGoBack.setBounds(31, 393, 117, 29);
+		btnGoBack.setBounds(30, 439, 117, 29);
 		add(btnGoBack);
+		
+		JLabel lblEmergencyContactName = new JLabel("Emergency Contact Name:");
+		lblEmergencyContactName.setBounds(92, 378, 144, 14);
+		add(lblEmergencyContactName);
+		
+		emergencynameTextFiled = new JTextField();
+		emergencynameTextFiled.setBounds(246, 375, 134, 20);
+		add(emergencynameTextFiled);
+		emergencynameTextFiled.setColumns(10);
+		
+		JLabel lblEmergencyContactPhone = new JLabel("Emergency Contact phone:");
+		lblEmergencyContactPhone.setBounds(92, 403, 154, 14);
+		add(lblEmergencyContactPhone);
+		
+		emergencyPhoneTextFiled = new JTextField();
+		emergencyPhoneTextFiled.setBounds(246, 400, 134, 20);
+		add(emergencyPhoneTextFiled);
+		emergencyPhoneTextFiled.setColumns(10);
 		btnGoBack.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				removeAll();
@@ -172,12 +200,34 @@ public class PatientProfilePanel extends JPanel{
 
 	}
 
-	public void createPatientProfile() throws SQLException{
+	public boolean createPatientProfile() throws SQLException{
 		String SQL="INSERT INTO Patient VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		ResultSet rs =null;
 		
 		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
-		
+			stmt.setString(1,patientUsername);
+			stmt.setString(2,this.nameField.getText());
+			stmt.setString(3,this.birthdateField.getText());
+			stmt.setString(4,this.genderComboBox.getSelectedItem().toString());
+			stmt.setString(5, this.addressField.getText());
+			stmt.setInt(6,Integer.parseInt(this.workPhoneField.getText()));
+			stmt.setInt(7,Integer.parseInt(this.homePhoneField.getText()));
+			stmt.setString(8,this.emergencynameTextFiled.getText());		
+			stmt.setString(9,this.emergencyPhoneTextFiled.getText());		
+			stmt.setInt(10,Integer.parseInt(this.weightField.getText()));		
+			stmt.setInt(11,Integer.parseInt(this.heightField.getText()));		
+			stmt.setString(12,this.incomeField.getText());		
+			stmt.setInt(13,0);
+			
+			int affected = stmt.executeUpdate();
+			
+			if (affected == 1) {
+				System.out.println("data successful import");
+				return true;
+			} else {
+				System.err.println("no row affected!!");
+				return false;
+			}
 		}
 			
 		}
