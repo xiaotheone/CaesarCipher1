@@ -201,7 +201,7 @@ public class PatientProfilePanel extends JPanel{
 	}
 
 	public boolean createPatientProfile() throws SQLException{
-		String SQL="INSERT INTO Patient VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String SQL="INSERT INTO Patient(PatientUsername, Name, DOB, Gender, Addres, WorkPhone, HomePhone, EmerContactName, EmerContactPhone, Weight, Height, AnualIncome) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 		ResultSet rs =null;
 		
 		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
@@ -217,10 +217,25 @@ public class PatientProfilePanel extends JPanel{
 			stmt.setInt(10,Integer.parseInt(this.weightField.getText()));		
 			stmt.setInt(11,Integer.parseInt(this.heightField.getText()));		
 			stmt.setString(12,this.incomeField.getText());		
-			stmt.setInt(13,0);
+			//stmt.setInt(13,0);
 			
 			int affected = stmt.executeUpdate();
 			
+			try(PreparedStatement stmt2 = conn.prepareStatement(SQL);) {
+				String SQL2 ="INSERT INTO Patient_Allergies VALUES (?, ?)";
+				
+				
+				stmt2.setString(1, patientUsername);
+				stmt2.setString(2, this.allergiesField.getText());
+				int affected2 = stmt2.executeUpdate();
+				if (affected == 1) {
+					System.out.println("allergy imported");
+					
+				} else {
+					System.err.println("allergy importing failed");
+					
+				}
+			}
 			if (affected == 1) {
 				System.out.println("data successful import");
 				return true;
