@@ -203,6 +203,7 @@ public class LoginPanel extends JPanel {
 								
 								removeAll();
 								currentPatient.cp.setPatientUsername(newName);
+								System.out.println(currentPatient.cp.getPatientUsername());
 								PatientProfilePanel p = new PatientProfilePanel();
 								add(p);
 								

@@ -13,6 +13,7 @@ import java.sql.Statement;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JSpinner;
@@ -190,6 +191,20 @@ public class PatientProfilePanel extends JPanel{
 		emergencyPhoneTextFiled.setBounds(246, 400, 134, 20);
 		add(emergencyPhoneTextFiled);
 		emergencyPhoneTextFiled.setColumns(10);
+		
+		JButton button = new JButton("+ ");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					CreateAllergy();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		button.setBounds(400, 348, 66, 23);
+		add(button);
 		btnGoBack.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				removeAll();
@@ -200,8 +215,29 @@ public class PatientProfilePanel extends JPanel{
 
 	}
 
+	public boolean CreateAllergy() throws SQLException{
+		String SQL ="INSERT INTO Patient_Allergies VALUES (?, ?)";
+		
+		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
+		
+		
+			stmt.setString(1, currentPatient.cp.getPatientUsername());
+			stmt.setString(2, this.allergiesField.getText());
+			int affected = stmt.executeUpdate();
+			if (affected == 1) {
+				System.out.println("allergy imported");
+				JOptionPane.showMessageDialog(getParent(), "allergy imported");
+				return true;
+			
+			} else {
+				System.err.println("allergy importing failed");
+				return false;
+			}
+		}
+
+	}
 	public boolean createPatientProfile() throws SQLException{
-		String SQL="INSERT INTO Patient(PatientUsername, Name, DOB, Gender, Addres, WorkPhone, HomePhone, EmerContactName, EmerContactPhone, Weight, Height, AnualIncome) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+		String SQL="INSERT INTO Patient(PatientUsername, Name, DOB, Gender, Address, WorkPhone, HomePhone, EmerContactName, EmerContactPhone, Weight, Height, AnnualIncome) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 		ResultSet rs =null;
 		
 		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
@@ -220,15 +256,14 @@ public class PatientProfilePanel extends JPanel{
 			//stmt.setInt(13,0);
 			
 			int affected = stmt.executeUpdate();
+			String SQL2 ="INSERT INTO Patient_Allergies VALUES (?, ?)";
 			
-			try(PreparedStatement stmt2 = conn.prepareStatement(SQL);) {
-				String SQL2 ="INSERT INTO Patient_Allergies VALUES (?, ?)";
-				
-				
-				stmt2.setString(1, patientUsername);
+			try(PreparedStatement stmt2 = conn.prepareStatement(SQL2);) {
+
+				stmt2.setString(1, currentPatient.cp.getPatientUsername());
 				stmt2.setString(2, this.allergiesField.getText());
 				int affected2 = stmt2.executeUpdate();
-				if (affected == 1) {
+				if (affected2 == 1) {
 					System.out.println("allergy imported");
 					
 				} else {
