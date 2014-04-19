@@ -88,6 +88,7 @@ public class LoginPanel extends JPanel {
 						case 1:
 							removeAll();
 							add(new PatientHomepagePanel());
+							currentPatient.cp.setPatientUsername(UsernameField.getText());
 							break;
 						case 2:
 							removeAll();
@@ -199,9 +200,10 @@ public class LoginPanel extends JPanel {
 								// swith to patient profile creation
 								
 								removeAll();
+								currentPatient.cp.setPatientUsername(newName);
 								PatientProfilePanel p = new PatientProfilePanel();
 								add(p);
-								p.patientUsername= newName;
+								
 								
 								repaint();
 							}

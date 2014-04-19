@@ -205,7 +205,7 @@ public class PatientProfilePanel extends JPanel{
 		ResultSet rs =null;
 		
 		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
-			stmt.setString(1,patientUsername);
+			stmt.setString(1,currentPatient.cp.getPatientUsername());
 			stmt.setString(2,this.nameField.getText());
 			stmt.setString(3,this.birthdateField.getText());
 			stmt.setString(4,this.genderComboBox.getSelectedItem().toString());

@@ -1,4 +1,6 @@
 import java.awt.Graphics;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
@@ -15,13 +18,17 @@ import javax.swing.JSpinner;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import java.sql.Timestamp;
+import java.util.Date;
 /**
  * 
  */
@@ -33,6 +40,8 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class PatientCommunicationPanel extends JPanel{
 	
+	private JComboBox comboBox;
+	private JTextArea textArea;
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
 	public static BufferedImage image;
 	
@@ -53,7 +62,7 @@ public class PatientCommunicationPanel extends JPanel{
 		
 //		HashMap doctorList = doctorList();
 		String[] docNames = doctorList();
-		JComboBox comboBox = new JComboBox(docNames);
+		comboBox = new JComboBox(docNames);
 		comboBox.setBounds(170, 110, 126, 27);
 		add(comboBox);
 		
@@ -61,13 +70,23 @@ public class PatientCommunicationPanel extends JPanel{
 		lblMessages.setBounds(66, 154, 61, 16);
 		add(lblMessages);
 		
-		JTextArea textArea = new JTextArea();
+	    textArea = new JTextArea();
 		textArea.setBounds(170, 154, 266, 200);
 		add(textArea);
 		
 		JButton btnNewButton = new JButton("Send Message");
 		btnNewButton.setBounds(405, 390, 117, 29);
 		add(btnNewButton);
+		btnNewButton.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e) {
+					try {
+						sendMessage();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+		});
 		
 		JLabel lblBack = new JLabel("Back");
 		lblBack.addMouseListener(new MouseAdapter() {
@@ -97,7 +116,7 @@ public class PatientCommunicationPanel extends JPanel{
 	 */
 	public String[] doctorList() throws SQLException{
 		
-		String SQL = "SELECT Fname, Lname FROM Doctor";
+		String SQL = "SELECT DocUsername, Fname, Lname FROM Doctor";
 		
 		Statement stmt = conn.createStatement(
 				ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -105,6 +124,9 @@ public class PatientCommunicationPanel extends JPanel{
 		List<String> nameList = new ArrayList<String>();
 		while(rs.next()) {
 			nameList.add("DR." + rs.getString("Lname"));
+			//nameList.add( rs.getString("Lname"));
+			
+			
 		}
 		
 		String[] docNames = (String[]) nameList.toArray(new String[nameList.size()]);
@@ -125,8 +147,61 @@ public class PatientCommunicationPanel extends JPanel{
 	/*
 	 * insert into message to doctor table
 	 */
-	public void sendMessage() throws SQLException{
+	public String getDoctorUsename(String Lname) throws SQLException{
+		
+			
+			
+	String SQL = "SELECT DocUsername FROM Doctor WHERE Lname = ?";
+	String s="";
+	try(PreparedStatement stmt = conn.prepareStatement(SQL);){
+		stmt.setString(1, Lname);
+		ResultSet rs = stmt.executeQuery();
+		rs.next();
+		 s = rs.getString("DocUsername");
+		}
+	
+
+
+			
+		
+		return s;
+		
+		
+	}
+	public boolean sendMessage() throws SQLException{
 		String SQL = "INSERT INTO Sends_messageToDoc VALUES (?, ?, ?, ?, ?)";
+		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
+			stmt.setString(1, currentPatient.cp.getPatientUsername());
+			
+			System.out.println("cp "+ currentPatient.cp.getPatientUsername() );
+			stmt.setString(2, getDoctorUsename((comboBox.getSelectedItem()).toString().substring(3)));
+			stmt.setString(3, getCurrentTimeStamp());
+			stmt.setString(4, textArea.getText() );
+			stmt.setInt(5, 0);
+			
+			int affected = stmt.executeUpdate();
+			if (affected == 1) {
+				System.out.println("message sent");
+				JOptionPane.showMessageDialog(getParent(), "message sent");
+
+				return true;
+			} else {
+				System.err.println("error");
+				JOptionPane.showMessageDialog(getParent(), "error");
+				return false;
+			}
+		}
+		
+	
+	}
+	
+	private static String getCurrentTimeStamp() {
+		 
+		java.util.Date today = new java.util.Date();
+		DateFormat dateFormat = new SimpleDateFormat(
+				"yyyy/MM/dd HH:mm:ss");
+		return dateFormat.format(today.getTime());
+ 
 	}
 }
 	
