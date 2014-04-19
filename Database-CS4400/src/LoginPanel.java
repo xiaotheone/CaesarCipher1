@@ -93,6 +93,7 @@ public class LoginPanel extends JPanel {
 						case 2:
 							removeAll();
 							add(new DoctorHomePage());
+							currentDoctor.cd.setDoctorUsername(UsernameField.getText());
 							break;
 
 						}
@@ -194,6 +195,7 @@ public class LoginPanel extends JPanel {
 								//swith to doctor profile creation
 								
 								removeAll();
+								currentDoctor.cd.setDoctorUsername(newName);
 								add(new DoctorProfilePanel());
 								repaint();
 							}else if (userType == 2) {

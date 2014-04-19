@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
@@ -47,6 +48,13 @@ public class DoctorHomePage extends JPanel{
 		JButton btnCommunicate = new JButton("Communicate");
 		btnCommunicate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new DoctorCommunicationPanel());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnCommunicate.setBounds(58, 259, 130, 45);
