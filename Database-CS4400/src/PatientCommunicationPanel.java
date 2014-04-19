@@ -19,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -50,6 +51,7 @@ public class PatientCommunicationPanel extends JPanel{
 		lblNewLabel.setBounds(66, 114, 61, 16);
 		add(lblNewLabel);
 		
+//		HashMap doctorList = doctorList();
 		String[] docNames = doctorList();
 		JComboBox comboBox = new JComboBox(docNames);
 		comboBox.setBounds(170, 110, 126, 27);
@@ -110,6 +112,13 @@ public class PatientCommunicationPanel extends JPanel{
 			System.out.println(docNames[i]);
 		}
 		return docNames;
+		
+//		HashMap<String, String> doctorList = new HashMap<>();
+//		while(rs.next()) {
+//			doctorList.put(rs.getString("docUsername"), rs.getString("Lname"));
+//		}
+//		
+//		return doctorList;
 		
 	}
 	
