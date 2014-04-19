@@ -64,7 +64,7 @@ public class PatientCommunicationPanel extends JPanel{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				removeAll();
-				add(new PatientProfilePanel());
+				add(new PatientHomepagePanel());
 				repaint();
 			}
 		});

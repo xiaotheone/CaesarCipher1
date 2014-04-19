@@ -165,7 +165,7 @@ public class PatientProfilePanel extends JPanel{
 		btnGoBack.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				removeAll();
-				add(new LoginPanel());
+				add(new PatientHomepagePanel());
 				
 			}
 		});
