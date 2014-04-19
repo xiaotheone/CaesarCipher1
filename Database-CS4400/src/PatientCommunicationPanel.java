@@ -2,6 +2,10 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -13,6 +17,9 @@ import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -25,10 +32,10 @@ import java.awt.event.MouseEvent;
 @SuppressWarnings("serial")
 public class PatientCommunicationPanel extends JPanel{
 	
-	
+	private static Connection conn = ConnectionManager.getInstance().getConnection();
 	public static BufferedImage image;
 	
-	public PatientCommunicationPanel() {
+	public PatientCommunicationPanel() throws SQLException {
 		
 		setSize(550, 450);
 		setLayout(null);
@@ -43,7 +50,8 @@ public class PatientCommunicationPanel extends JPanel{
 		lblNewLabel.setBounds(66, 114, 61, 16);
 		add(lblNewLabel);
 		
-		JComboBox comboBox = new JComboBox();
+		String[] docNames = doctorList();
+		JComboBox comboBox = new JComboBox(docNames);
 		comboBox.setBounds(170, 110, 126, 27);
 		add(comboBox);
 		
@@ -85,9 +93,23 @@ public class PatientCommunicationPanel extends JPanel{
 	/*
 	 * select names of all doctors
 	 */
-	public String[] doctorList(){
+	public String[] doctorList() throws SQLException{
 		
-		return null;
+		String SQL = "SELECT Fname, Lname FROM Doctor";
+		
+		Statement stmt = conn.createStatement(
+				ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ResultSet rs = stmt.executeQuery(SQL);
+		List<String> nameList = new ArrayList<String>();
+		while(rs.next()) {
+			nameList.add("DR." + rs.getString("Lname"));
+		}
+		
+		String[] docNames = (String[]) nameList.toArray(new String[nameList.size()]);
+		for(int i = 0; i < docNames.length; i++){
+			System.out.println(docNames[i]);
+		}
+		return docNames;
 		
 	}
 }

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * 
@@ -64,7 +65,12 @@ public class PatientHomepagePanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				removeAll();
-				add(new PatientCommunicationPanel());
+				try {
+					add(new PatientCommunicationPanel());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				System.out.println("communication page");
 			}
 			
@@ -101,7 +107,6 @@ public class PatientHomepagePanel extends JPanel{
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 		}
 	}
 	
