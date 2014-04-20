@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +59,14 @@ public class PatientHomepagePanel extends JPanel {
 		JButton btnOrderMedication = new JButton("Order Medication");
 		btnOrderMedication.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new OrderMedicationPanel());
+				} catch (SQLException | ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				repaint();
 			}
 		});
 		btnOrderMedication.setBounds(74, 219, 150, 35);
