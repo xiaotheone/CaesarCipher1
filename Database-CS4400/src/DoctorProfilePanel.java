@@ -4,11 +4,15 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.security.Timestamp;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -133,6 +137,14 @@ public class DoctorProfilePanel extends JPanel{
 		btnSubmit.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//finish submit profile button
+				try {
+					createDoctorProfile();
+					removeAll();
+					add(new DoctorHomePage());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
@@ -170,7 +182,12 @@ public class DoctorProfilePanel extends JPanel{
 		btnImport.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//add import action
-				
+				try {
+					importTime();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					System.err.println(e1);
+				}
 			}
 		});
 		
@@ -188,20 +205,23 @@ public class DoctorProfilePanel extends JPanel{
 		
 	}
 	
-	public boolean createDoctorProfile(){
+	public boolean createDoctorProfile() throws SQLException{
 		
-		String SQL = "INSERT INTO Dortor(DocUsername, License, Fname, Lname, DOB, WorkPhone, HomeAddress, Specialty, RoomNo) VALUES (?,?,?,?,?,?,?,?,?)";
-		String SQL2 = "INSERT INTO Doctor_Availiability(DocUserName, To, From, Day) VALUES (?,?,?,?)";
+		String SQL = "INSERT INTO Doctor(DocUsername, LicenseNo, Fname, Lname, DOB, WorkPhone, HomeAddress, Specialty, RoomNo) VALUES (?,?,?,?,?,?,?,?,?)";
+		String SQL2 = "INSERT INTO Doctor_Availability (DocUserName, To, From, Day) VALUES (?,?,?,?)";
 		ResultSet rs =null;
 
 		try (PreparedStatement stmt = conn.prepareStatement(SQL);){
+			
+			System.out.println("username: " + currentDoctor.cd.getDoctorUsername());
+			System.out.println("From timeL " + this.comboTo.getSelectedItem().toString());
 			
 			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
 			stmt.setInt(2, Integer.parseInt(this.licenseField.getText()));
 			stmt.setString(3, this.firstnameField.getText());
 			stmt.setString(4, this.lasenameField.getText());
 			stmt.setString(5, this.birthdateField.getText());
-			stmt.setInt(6,Integer.parseInt(this.workphoneField.getText()));
+			stmt.setString(6,this.workphoneField.getText());
 			stmt.setString(7, this.addressField.getText());
 			stmt.setString(8, this.comboBoxSpeciatlty.getSelectedItem().toString());
 			stmt.setInt(9, Integer.parseInt(this.roombumberField.getText()));
@@ -224,13 +244,42 @@ public class DoctorProfilePanel extends JPanel{
 				}
 			} catch (Exception e) {
 				// TODO: handle exception
+				System.err.println(e);
+			}
+			if (affected == 1) {
+				System.out.println("data successful import");
+				return true;
+			} else {
+				System.err.println("no row affected!!");
+				return false;
 			}
 			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+		} 
+	}
+	
+	public boolean  importTime() throws SQLException{
 		
-		return true;
+		
+		String SQL = "INSERT INTO Doctor_Availability (DocUserName, From, To, Day) VALUES (?,?,?,?)";
+		
+		try (PreparedStatement stmt = conn.prepareStatement(SQL);){
+			
+			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
+			stmt.setString(2, this.comboTo.getSelectedItem().toString());
+			stmt.setString(3, this.comboFrom.getSelectedItem().toString());
+			stmt.setString(4, this.comboWeekday.getSelectedItem().toString());
+
+			int affected2 = stmt.executeUpdate();
+			if (affected2 == 2) {
+				System.out.println("Avaliable time imported.");
+				JOptionPane.showMessageDialog(getParent(), "Time imported");
+				return true;
+			} else {
+				System.out.println("Avaliable time not imported.");
+				JOptionPane.showMessageDialog(getParent(), "Time not imported");
+				return false;
+			}
+		} 
 	}
 	
 	public void paintComponent(Graphics g) {

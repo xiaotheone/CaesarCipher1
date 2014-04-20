@@ -63,6 +63,17 @@ public class DoctorHomePage extends JPanel{
 		JButton btnEditeProfile = new JButton("Edite Profile");
 		btnEditeProfile.setBounds(58, 316, 130, 44);
 		add(btnEditeProfile);
+		btnEditeProfile.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				removeAll();
+				try {
+					add(new DoctorProfilePanel());
+				} catch (Exception e2) {
+					// TODO: handle exception
+					e2.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnClose = new JButton("Close");
 		btnClose.setBounds(377, 373, 117, 29);
