@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -31,6 +33,7 @@ public class PatientHomepagePanel extends JPanel {
 		setSize(550, 450);
 		setLayout(null);
 		
+
 		JLabel lblPatientHomepage = new JLabel("Patient Homepage");
 		lblPatientHomepage.setBounds(214, 25, 136, 16);
 		add(lblPatientHomepage);
@@ -158,16 +161,6 @@ public class PatientHomepagePanel extends JPanel {
 		return count;
 	}
 	
-	public String[] getStatus(){
-		return null;
-	}
-	
-	public String[] getContent(){
-		return null;
-	}
-	
-	public String[] getTime(){
-		return null;
-	}
+
 
 }
