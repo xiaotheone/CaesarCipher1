@@ -120,7 +120,12 @@ public class DoctorCommunicationPanel extends JPanel{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				removeAll();
-				add(new DoctorHomePage());
+				try {
+					add(new DoctorHomePage());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				repaint();
 			}
 		});

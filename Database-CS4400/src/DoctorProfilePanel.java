@@ -198,7 +198,12 @@ public class DoctorProfilePanel extends JPanel{
 		btnGoBack.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				removeAll();
-				add(new DoctorHomePage());
+				try {
+					add(new DoctorHomePage());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 			}
 		});

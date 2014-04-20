@@ -99,7 +99,7 @@ public class PatientCommunicationPanel extends JPanel{
 				repaint();
 			}
 		});
-		lblBack.setBounds(66, 395, 61, 16);
+		lblBack.setBounds(66, 395, 61, 16);	
 		add(lblBack);
 		
 		JLabel lblSendMessageTo = new JLabel("Send Message To Doctor");
