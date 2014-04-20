@@ -116,11 +116,17 @@ public class PatientHomepagePanel extends JPanel {
 			}
 		});
 		btnUnreadmessages.setBounds(321, 219, 150, 35);
+//		int count = getUnreadMessage();
+//		System.out.println("" + count + "unread messages");
+//		btnUnreadmessages.setText("" +  count + " unread Messages");
+		add(btnUnreadmessages);
+		
+		JLabel lblUnreadMessages = new JLabel("Unread Messages");
+		lblUnreadMessages.setBounds(339, 287, 109, 16);
 		int count = getUnreadMessage();
 		System.out.println("" + count + "unread messages");
 		btnUnreadmessages.setText("" +  count + " unread Messages");
-		add(btnUnreadmessages);
-		
+		add(lblUnreadMessages);
 		
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
@@ -150,6 +156,18 @@ public class PatientHomepagePanel extends JPanel {
 			System.out.println("Error");
 		}
 		return count;
+	}
+	
+	public String[] getStatus(){
+		return null;
+	}
+	
+	public String[] getContent(){
+		return null;
+	}
+	
+	public String[] getTime(){
+		return null;
 	}
 
 }
