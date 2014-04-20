@@ -208,8 +208,12 @@ public class PatientProfilePanel extends JPanel{
 		btnGoBack.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				removeAll();
-				add(new PatientHomepagePanel());
-				
+				try {
+					add(new PatientHomepagePanel());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 

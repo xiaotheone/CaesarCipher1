@@ -93,7 +93,12 @@ public class PatientCommunicationPanel extends JPanel{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				removeAll();
-				add(new PatientHomepagePanel());
+				try {
+					add(new PatientHomepagePanel());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				repaint();
 			}
 		});
@@ -151,13 +156,13 @@ public class PatientCommunicationPanel extends JPanel{
 		
 			
 			
-	String SQL = "SELECT DocUsername FROM Doctor WHERE Lname = ?";
-	String s="";
-	try(PreparedStatement stmt = conn.prepareStatement(SQL);){
-		stmt.setString(1, Lname);
-		ResultSet rs = stmt.executeQuery();
-		rs.next();
-		 s = rs.getString("DocUsername");
+		String SQL = "SELECT DocUsername FROM Doctor WHERE Lname = ?";
+		String s="";
+		try(PreparedStatement stmt = conn.prepareStatement(SQL);){
+			stmt.setString(1, Lname);
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			 s = rs.getString("DocUsername");
 		}
 	
 
