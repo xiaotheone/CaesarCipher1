@@ -6,7 +6,6 @@ import javax.swing.JButton;
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +93,13 @@ public class PatientHomepagePanel extends JPanel {
 		JButton RateaDoctor = new JButton("Rate A Doctor");
 		RateaDoctor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new RateDoctorPanel());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		RateaDoctor.setBounds(321, 103, 150, 35);
