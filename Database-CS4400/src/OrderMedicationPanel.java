@@ -144,7 +144,12 @@ public class OrderMedicationPanel extends JPanel {
 					JOptionPane.showMessageDialog(getParent(), "Basket is empty");
 				}else{
 					removeAll();
-					add(new PaymentInformationPanel());
+					try {
+						add(new PaymentInformationPanel());
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					repaint();
 				}
 			}
@@ -219,9 +224,12 @@ public class OrderMedicationPanel extends JPanel {
 		}else{
 			String SQL = "SELECT * FROM Prescription WHERE VisitID = ? AND MedicineName = ?";
 			try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
-				stmt.setString(1, "visitID");
-				stmt.setString(2, "medName");
+				System.out.println(visitID);
+				System.out.println(medName);
+				stmt.setInt(1, visitID);
+				stmt.setString(2, medName);
 				ResultSet rs = stmt.executeQuery();
+				// System.out.println("prescribe medication  " + rs.getRow());
 				if(rs.next()){
 					System.out.println("medicine is prescribed");
 					return true;
@@ -244,9 +252,11 @@ public class OrderMedicationPanel extends JPanel {
 			stmt.setString(2, getDoctorUsename((CbDoctorList.getSelectedItem()).toString().substring(3)));
 			//stmt.setDate(3, (java.sql.Date) CbDate.getSelectedItem());
 			ResultSet rs = stmt.executeQuery();
+			//System.out.println(rs.next());
 			if(rs.next()){
 				visitID = rs.getInt("VisitID");
 				System.out.println("VisitID is " + visitID);
+				return visitID;
 			}else{
 				System.out.println("not found");
 			}

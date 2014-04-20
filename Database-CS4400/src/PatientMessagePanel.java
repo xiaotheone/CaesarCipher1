@@ -47,8 +47,6 @@ public class PatientMessagePanel extends JPanel{
 	public static BufferedImage image;
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
 	public PatientMessagePanel() throws SQLException {
-		setSize(550, 450);
-		setLayout(null);
 
 		setSize(550, 450);
 		setLayout(null);
