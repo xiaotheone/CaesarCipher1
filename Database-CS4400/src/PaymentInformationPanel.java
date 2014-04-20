@@ -115,18 +115,21 @@ public class PaymentInformationPanel extends JPanel{
 		List<String> datesList = new ArrayList<String>();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-		int count = 0;
+		int count = 300;
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(cal.getTime());
-		while(count > 365){
+		while(count > 0)   {
 			datesList.add(dateFormat.format(cal.getTime()));
 			System.out.println(dateFormat.format(cal.getTime()));
 			cal.add(Calendar.DATE, 1);
-			count ++;
+			count --;
 		}
 		String[] dates = (String[]) datesList.toArray(new String[datesList.size()]);
 		
 		return dates;
-
+	}
+	
+	public boolean hasPaymentInfo(){
+		return false;
 	}
 }

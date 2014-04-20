@@ -164,6 +164,77 @@ public class OrderMedicationPanel extends JPanel {
 		}
 		
 	}
+	
+	public PaymentInformationPanel() throws ParseException {
+		setSize(550, 450);
+		setLayout(null);
+		
+		JLabel lblPaymentInformation = new JLabel("Payment Information");
+		lblPaymentInformation.setBounds(193, 40, 131, 16);
+		add(lblPaymentInformation);
+		
+		JLabel lblCardHoldersName = new JLabel("Card Holder's Name:");
+		lblCardHoldersName.setBounds(89, 139, 143, 16);
+		add(lblCardHoldersName);
+		
+		JLabel lblCardNumber = new JLabel("Card Number:");
+		lblCardNumber.setBounds(89, 194, 125, 16);
+		add(lblCardNumber);
+		
+
+		JLabel lblTypeOfCard = new JLabel("Type of Card:");
+		lblTypeOfCard.setBounds(89, 255, 125, 16);
+		add(lblTypeOfCard);
+		
+		JLabel lblCvv = new JLabel("CVV:");
+		lblCvv.setBounds(89, 305, 61, 16);
+		add(lblCvv);
+		
+		JLabel lblDateOfExpiry = new JLabel("Date of Expiry:");
+		lblDateOfExpiry.setBounds(89, 354, 110, 16);
+		add(lblDateOfExpiry);
+		
+		tfName = new JTextField();
+		tfName.setBounds(292, 133, 134, 28);
+		add(tfName);
+		tfName.setColumns(10);
+		
+		tfCardNo = new JTextField();
+		tfCardNo.setBounds(292, 188, 134, 28);
+		add(tfCardNo);
+		tfCardNo.setColumns(10);
+		
+		String[] type = {"Bank of America", "American Express", "Discover", "Chase"};
+		JComboBox CbType = new JComboBox(type);
+		CbType.setBounds(292, 251, 90, 27);
+		add(CbType);
+		
+		tfCVV = new JTextField();
+		tfCVV.setBounds(292, 299, 134, 28);
+		add(tfCVV);
+		tfCVV.setColumns(10);
+		
+		String[] dates = getDates();
+		JComboBox CbDates = new JComboBox(dates);
+		CbDates.setBounds(292, 350, 110, 27);
+		add(CbDates);
+		
+		JButton btnOrder = new JButton("Order");
+		btnOrder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnOrder.setBounds(389, 399, 117, 29);
+		add(btnOrder);
+		
+		try {
+			image = ImageIO.read(new File("Images/buzz.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+		}
+		
+
+	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -250,7 +321,6 @@ public class OrderMedicationPanel extends JPanel {
 		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
 			stmt.setString(1, currentPatient.cp.getPatientUsername());
 			stmt.setString(2, getDoctorUsename((CbDoctorList.getSelectedItem()).toString().substring(3)));
-			//stmt.setDate(3, (java.sql.Date) CbDate.getSelectedItem());
 			ResultSet rs = stmt.executeQuery();
 			//System.out.println(rs.next());
 			if(rs.next()){
