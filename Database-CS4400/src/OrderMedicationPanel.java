@@ -3,6 +3,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,6 +17,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -36,10 +38,13 @@ import java.awt.event.ActionEvent;
  */
 public class OrderMedicationPanel extends JPanel {
 	
+	
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
 	public static BufferedImage image;
 	private JTextField txtMedicationName;
-	
+	JComboBox CbDoctorList;
+	JComboBox CbDate;
+	List<String> basket = new ArrayList<String>();
 	public OrderMedicationPanel() throws SQLException, ParseException {
 		setSize(550, 450);
 		setLayout(null);
@@ -90,7 +95,7 @@ public class OrderMedicationPanel extends JPanel {
 		add(CbDurationDay);
 		
 		String[] docNames = doctorList();
-		JComboBox CbDoctorList = new JComboBox(docNames);
+		CbDoctorList = new JComboBox(docNames);
 		CbDoctorList.setBounds(289, 285, 77, 27);
 		add(CbDoctorList);
 		
@@ -107,7 +112,7 @@ public class OrderMedicationPanel extends JPanel {
 		add(lblDays);
 		
 		String[] dates = getDates();
-		JComboBox CbDate = new JComboBox(dates);
+		CbDate = new JComboBox(dates);
 		CbDate.setBounds(289, 338, 108, 27);
 		add(CbDate);
 		
@@ -115,6 +120,18 @@ public class OrderMedicationPanel extends JPanel {
 		lblAddMedicationTo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				try {
+					String medName = txtMedicationName.getText();
+					if(isPrescribed(medName)) {
+						basket.add(medName);
+						JOptionPane.showMessageDialog(getParent(), "Added to the basket!");
+					}else{
+						JOptionPane.showMessageDialog(getParent(), "Medcine has not been prescribed");
+					}
+				} catch (SQLException e1) {
+					System.out.println("error");					
+					e1.printStackTrace();
+				}
 			}
 		});
 		lblAddMedicationTo.setBounds(51, 393, 176, 16);
@@ -123,6 +140,13 @@ public class OrderMedicationPanel extends JPanel {
 		JButton btnCheckOut = new JButton("Check Out");
 		btnCheckOut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(basket.isEmpty()){
+					JOptionPane.showMessageDialog(getParent(), "Basket is empty");
+				}else{
+					removeAll();
+					add(new PaymentInformationPanel());
+					repaint();
+				}
 			}
 		});
 		btnCheckOut.setBounds(403, 388, 117, 29);
@@ -167,7 +191,7 @@ public class OrderMedicationPanel extends JPanel {
 	
 	public String[] getDates() throws ParseException{
 		List<String> datesList = new ArrayList<String>();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		int count = 20;
 		Calendar cal = Calendar.getInstance();
@@ -182,5 +206,67 @@ public class OrderMedicationPanel extends JPanel {
 		
 		return dates;
 
+	}
+	
+	/*
+	 * check to see if medication has been prescribed
+	 */
+	public boolean  isPrescribed(String medName) throws SQLException{
+		System.out.println(medName);
+		int visitID = getVisitID();
+		if(visitID == 0){
+			return false;
+		}else{
+			String SQL = "SELECT * FROM Prescription WHERE VisitID = ? AND MedicineName = ?";
+			try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
+				stmt.setString(1, "visitID");
+				stmt.setString(2, "medName");
+				ResultSet rs = stmt.executeQuery();
+				if(rs.next()){
+					System.out.println("medicine is prescribed");
+					return true;
+				}else{
+					System.out.println("no medication found");
+				}
+			}
+		}
+		return false;
+	}
+	
+	/*
+	 * get patient visitID, return empty string if not found.
+	 */
+	public int getVisitID() throws SQLException{
+		int visitID = 0;
+		String SQL = "SELECT VisitID FROM Visit WHERE PatUsername = ? AND DocUsername = ?";
+		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
+			stmt.setString(1, currentPatient.cp.getPatientUsername());
+			stmt.setString(2, getDoctorUsename((CbDoctorList.getSelectedItem()).toString().substring(3)));
+			//stmt.setDate(3, (java.sql.Date) CbDate.getSelectedItem());
+			ResultSet rs = stmt.executeQuery();
+			if(rs.next()){
+				visitID = rs.getInt("VisitID");
+				System.out.println("VisitID is " + visitID);
+			}else{
+				System.out.println("not found");
+			}
+		}
+		return visitID;
+	}
+	
+	/*
+	 * insert into message to doctor table
+	 */
+	public String getDoctorUsename(String Lname) throws SQLException{
+		
+		String SQL = "SELECT DocUsername FROM Doctor WHERE Lname = ?";
+		String s="";
+		try(PreparedStatement stmt = conn.prepareStatement(SQL);){
+			stmt.setString(1, Lname);
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			 s = rs.getString("DocUsername");
+		}
+		return s;
 	}
 }

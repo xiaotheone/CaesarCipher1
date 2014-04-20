@@ -161,14 +161,7 @@ public class PatientCommunicationPanel extends JPanel{
 			rs.next();
 			 s = rs.getString("DocUsername");
 		}
-	
-
-
-			
-		
 		return s;
-		
-		
 	}
 	public boolean sendMessage() throws SQLException{
 		String SQL = "INSERT INTO Sends_messageToDoc VALUES (?, ?, ?, ?, ?)";
