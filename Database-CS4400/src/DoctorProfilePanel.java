@@ -4,12 +4,16 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 
 
 /**
@@ -18,15 +22,21 @@ import javax.swing.JButton;
  *
  */
 public class DoctorProfilePanel extends JPanel{
+	
+	private static Connection conn = ConnectionManager.getInstance().getConnection();
+
 	private JTextField licenseField;
 	private JTextField firstnameField;
 	private JTextField lasenameField;
 	private JTextField birthdateField;
 	private JTextField workphoneField;
-	private JTextField specialtyField;
 	private JTextField roombumberField;
 	private JTextField addressField;
-	private JTextField avaliabilityField_8;
+	JComboBox comboBoxSpeciatlty;
+	JComboBox comboFrom ;
+	JComboBox comboTo;
+	JComboBox comboWeekday;
+	
 	public static BufferedImage image;
 
 	public DoctorProfilePanel(){
@@ -72,8 +82,8 @@ public class DoctorProfilePanel extends JPanel{
 		lblHomeAddress.setBounds(49, 272, 113, 16);
 		add(lblHomeAddress);
 		
-		JLabel lblA = new JLabel("Avaliability");
-		lblA.setBounds(49, 300, 113, 16);
+		JLabel lblA = new JLabel("Avaliability:");
+		lblA.setBounds(49, 300, 76, 16);
 		add(lblA);
 		
 		JLabel lblNewLabel = new JLabel("Doctor Profile");
@@ -105,11 +115,6 @@ public class DoctorProfilePanel extends JPanel{
 		workphoneField.setBounds(174, 188, 166, 16);
 		add(workphoneField);
 		
-		specialtyField = new JTextField();
-		specialtyField.setColumns(10);
-		specialtyField.setBounds(174, 216, 166, 16);
-		add(specialtyField);
-		
 		roombumberField = new JTextField();
 		roombumberField.setColumns(10);
 		roombumberField.setBounds(174, 244, 166, 16);
@@ -120,26 +125,112 @@ public class DoctorProfilePanel extends JPanel{
 		addressField.setBounds(174, 272, 166, 16);
 		add(addressField);
 		
-		avaliabilityField_8 = new JTextField();
-		avaliabilityField_8.setColumns(10);
-		avaliabilityField_8.setBounds(174, 300, 166, 16);
-		add(avaliabilityField_8);
 		
-		JButton btnNewButton = new JButton("Submit");
-		btnNewButton.setBounds(341, 377, 117, 29);
-		add(btnNewButton);
+		
+		JButton btnSubmit = new JButton("Submit");
+		btnSubmit.setBounds(341, 377, 117, 29);
+		add(btnSubmit);
+		btnSubmit.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				//finish submit profile button
+			}
+		});
 		
 		JButton btnGoBack = new JButton("GO BACK");
 		btnGoBack.setBounds(49, 377, 117, 29);
 		add(btnGoBack);
-		btnGoBack.addActionListener(new ActionListener(){
+		
+		String[] speciatlty = {"General Physician", "Heart Specialist", "Eye physician", "Orthopedics", "Psychiatry", "Gynecologist"};
+		
+		comboBoxSpeciatlty = new JComboBox(speciatlty);
+		comboBoxSpeciatlty.setBounds(174, 212, 166, 27);
+		add(comboBoxSpeciatlty);
+		
+		JLabel lblNewLabel_1 = new JLabel("From: ");
+		lblNewLabel_1.setBounds(235, 300, 40, 16);
+		add(lblNewLabel_1);
+		
+		String[] fromTime = {"9:30","10:30", "11:30", "12:30", "1:30", "2:30", "3:30", "4:30", "5:30", "6:30"};
+		comboFrom = new JComboBox(fromTime);
+		comboFrom.setBounds(270, 296, 86, 27);
+		add(comboFrom);
+		
+		JLabel lblNewLabel_2 = new JLabel("To:");
+		lblNewLabel_2.setBounds(355, 300, 29, 16);
+		add(lblNewLabel_2);
+		
+		String[] toTime = {"10:30", "11:30", "12:30", "1:30", "2:30", "3:30", "4:30", "5:30", "6:30","7:30"};
+		comboTo = new JComboBox(toTime);
+		comboTo.setBounds(372, 296, 86, 27);
+		add(comboTo);
+		
+		JButton btnImport = new JButton("+");
+		btnImport.setBounds(459, 295, 29, 29);
+		add(btnImport);
+		btnImport.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				removeAll();
-				add(new LoginPanel());
+				//add import action
 				
 			}
 		});
 		
+		String[] weekday = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+		comboWeekday = new JComboBox(weekday);
+		comboWeekday.setBounds(124, 295, 113, 27);
+		add(comboWeekday);
+		btnGoBack.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				removeAll();
+				add(new DoctorHomePage());
+				
+			}
+		});
+		
+	}
+	
+	public boolean createDoctorProfile(){
+		
+		String SQL = "INSERT INTO Dortor(DocUsername, License, Fname, Lname, DOB, WorkPhone, HomeAddress, Specialty, RoomNo) VALUES (?,?,?,?,?,?,?,?,?)";
+		String SQL2 = "INSERT INTO Doctor_Availiability(DocUserName, To, From, Day) VALUES (?,?,?,?)";
+		ResultSet rs =null;
+
+		try (PreparedStatement stmt = conn.prepareStatement(SQL);){
+			
+			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
+			stmt.setInt(2, Integer.parseInt(this.licenseField.getText()));
+			stmt.setString(3, this.firstnameField.getText());
+			stmt.setString(4, this.lasenameField.getText());
+			stmt.setString(5, this.birthdateField.getText());
+			stmt.setInt(6,Integer.parseInt(this.workphoneField.getText()));
+			stmt.setString(7, this.addressField.getText());
+			stmt.setString(8, this.comboBoxSpeciatlty.getSelectedItem().toString());
+			stmt.setInt(9, Integer.parseInt(this.roombumberField.getText()));
+			
+			//check above data been update or not
+			int affected = stmt.executeUpdate();
+			
+			try (PreparedStatement stmt2 = conn.prepareStatement(SQL2);){
+				
+				stmt2.setString(1, currentDoctor.cd.getDoctorUsername());
+				stmt2.setString(2, this.comboTo.getSelectedItem().toString());
+				stmt2.setString(3, this.comboFrom.getSelectedItem().toString());
+				stmt2.setString(4, this.comboWeekday.getSelectedItem().toString());
+				
+				int affected2 = stmt2.executeUpdate();
+				if (affected2 == 2) {
+					System.out.println("Avaliable time imported.");
+				} else {
+					System.out.println("Avaliable time not imported.");
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return true;
 	}
 	
 	public void paintComponent(Graphics g) {
