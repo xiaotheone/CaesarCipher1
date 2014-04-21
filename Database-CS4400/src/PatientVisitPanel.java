@@ -90,6 +90,7 @@ public class PatientVisitPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				try {
+					System.out.println("searching patient");
 					searchPatient();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block

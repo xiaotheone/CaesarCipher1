@@ -54,9 +54,18 @@ public class DoctorHomePage extends JPanel{
 			}
 		});
 		
-		JButton btnPatientVisit = new JButton("Patient Visit");
+		JButton btnPatientVisit = new JButton("Patient Visit History");
 		btnPatientVisit.setBounds(58, 148, 130, 45);
 		add(btnPatientVisit);
+		btnPatientVisit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				removeAll();
+				add(new PatientVisitPanel());
+			}
+		});
 		
 		JButton btnRecord = new JButton("Record a surgery");
 		btnRecord.setBounds(58, 205, 130, 45);
