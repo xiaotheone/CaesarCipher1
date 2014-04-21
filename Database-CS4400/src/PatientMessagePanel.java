@@ -47,6 +47,8 @@ public class PatientMessagePanel extends JPanel{
 	public static BufferedImage image;
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
 	public PatientMessagePanel() throws SQLException {
+		setSize(550, 450);
+		setLayout(null);
 
 		setSize(550, 450);
 		setLayout(null);
@@ -100,6 +102,7 @@ public class PatientMessagePanel extends JPanel{
 		
 		
 		String[] status = getStatus();
+		System.out.println( "hhhhhh" + getStatus().length);
 		if(status.length > 0){
 			
 			s1.setBounds(17, 143, 47, 16);
@@ -197,15 +200,11 @@ public class PatientMessagePanel extends JPanel{
 	}
 	
 	public String[] getStatus(){
-		String SQL = "SELECT Status FROM SendsMessageToPatient WHERE PatUsername = ? AND Status = ?"
-				     + "UNION SELECT Status FROM SendsMessageToPatient WHERE PatUsername = ? AND Status = ?";
+		String SQL = "SELECT Status FROM SendsMessageToPatient WHERE PatUsername = ?";
 		
 		List<String> statusList = new ArrayList<String>();
 		try(PreparedStatement stmt = conn.prepareStatement(SQL);){
 			stmt.setString(1, currentPatient.cp.getPatientUsername());
-			stmt.setString(2, "0");
-			stmt.setString(3, currentPatient.cp.getPatientUsername());
-			stmt.setString(4, "1");
 			
 			ResultSet rs = stmt.executeQuery();
 			while(rs.next()){
@@ -222,9 +221,7 @@ public class PatientMessagePanel extends JPanel{
 		}
 		
 		String[] status = (String[]) statusList.toArray(new String[statusList.size()]);
-		for(int i = 0; i < status.length; i++){
-			System.out.println(status[i]);
-		}
+
 		return status;
 	}
 
@@ -300,20 +297,19 @@ public class PatientMessagePanel extends JPanel{
 		return sender;
 	}
 		public boolean markAsRead() throws SQLException{
-			String SQL = "UPDATE SendsMessageToPatient SET	Status = \"1\"  WHERE	PatUsername =?";
+			String SQL = "UPDATE SendsMessageToPatient SET	Status = ? WHERE	PatUsername =?";
 		try (PreparedStatement stmt = conn.prepareStatement(SQL);) {	
-			stmt.setString(1, currentPatient.cp.getPatientUsername());
+			stmt.setString(1, "1");
+			stmt.setString(2, currentPatient.cp.getPatientUsername());
 			
 			
 			int affected = stmt.executeUpdate();
 			if (affected == 1) {
 				System.out.println("marked");
-				JOptionPane.showMessageDialog(getParent(), "marked");
 
 				return true;
 			} else {
-				System.err.println("error");
-				JOptionPane.showMessageDialog(getParent(), "error");
+			
 				return false;
 			}
 		}
@@ -334,3 +330,4 @@ public class PatientMessagePanel extends JPanel{
 			}
 		}
 }
+
