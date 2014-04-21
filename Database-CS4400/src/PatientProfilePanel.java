@@ -33,7 +33,7 @@ public class PatientProfilePanel extends JPanel{
 	
 
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
-	
+	public int edit = 0;
 	private JTextField nameField;
 	private JTextField birthdateField;
 	private JTextField addressField;
@@ -240,51 +240,87 @@ public class PatientProfilePanel extends JPanel{
 		}
 
 	}
-	public boolean createPatientProfile() throws SQLException{
-		String SQL="INSERT INTO Patient(PatientUsername, Name, DOB, Gender, Address, WorkPhone, HomePhone, EmerContactName, EmerContactPhone, Weight, Height, AnnualIncome) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-		ResultSet rs =null;
-		
-		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
-			stmt.setString(1,currentPatient.cp.getPatientUsername());
-			stmt.setString(2,this.nameField.getText());
-			stmt.setString(3,this.birthdateField.getText());
-			stmt.setString(4,this.genderComboBox.getSelectedItem().toString());
-			stmt.setString(5, this.addressField.getText());
-			stmt.setInt(6,Integer.parseInt(this.workPhoneField.getText()));
-			stmt.setInt(7,Integer.parseInt(this.homePhoneField.getText()));
-			stmt.setString(8,this.emergencynameTextFiled.getText());		
-			stmt.setString(9,this.emergencyPhoneTextFiled.getText());		
-			stmt.setInt(10,Integer.parseInt(this.weightField.getText()));		
-			stmt.setInt(11,Integer.parseInt(this.heightField.getText()));		
-			stmt.setString(12,this.incomeField.getText());		
-			//stmt.setInt(13,0);
-			
-			int affected = stmt.executeUpdate();
-			String SQL2 ="INSERT INTO Patient_Allergies VALUES (?, ?)";
-			
-			try(PreparedStatement stmt2 = conn.prepareStatement(SQL2);) {
 
-				stmt2.setString(1, currentPatient.cp.getPatientUsername());
-				stmt2.setString(2, this.allergiesField.getText());
-				int affected2 = stmt2.executeUpdate();
-				if (affected2 == 1) {
-					System.out.println("allergy imported");
-					
+	public void createPatientProfile() throws SQLException {
+
+		if (edit == 0) {
+			String SQL = "INSERT INTO Patient(PatientUsername, Name, DOB, Gender, Address, WorkPhone, HomePhone, EmerContactName, EmerContactPhone, Weight, Height, AnnualIncome) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+			ResultSet rs = null;
+
+			try (PreparedStatement stmt = conn.prepareStatement(SQL);) {
+				stmt.setString(1, currentPatient.cp.getPatientUsername());
+				stmt.setString(2, this.nameField.getText());
+				stmt.setString(3, this.birthdateField.getText());
+				stmt.setString(4, this.genderComboBox.getSelectedItem()
+						.toString());
+				stmt.setString(5, this.addressField.getText());
+				stmt.setInt(6, Integer.parseInt(this.workPhoneField.getText()));
+				stmt.setInt(7, Integer.parseInt(this.homePhoneField.getText()));
+				stmt.setString(8, this.emergencynameTextFiled.getText());
+				stmt.setString(9, this.emergencyPhoneTextFiled.getText());
+				stmt.setInt(10, Integer.parseInt(this.weightField.getText()));
+				stmt.setInt(11, Integer.parseInt(this.heightField.getText()));
+				stmt.setString(12, this.incomeField.getText());
+				// stmt.setInt(13,0);
+
+				int affected = stmt.executeUpdate();
+				String SQL2 = "INSERT INTO Patient_Allergies VALUES (?, ?)";
+
+				try (PreparedStatement stmt2 = conn.prepareStatement(SQL2);) {
+
+					stmt2.setString(1, currentPatient.cp.getPatientUsername());
+					stmt2.setString(2, this.allergiesField.getText());
+					int affected2 = stmt2.executeUpdate();
+					if (affected2 == 1) {
+						System.out.println("allergy imported");
+
+					} else {
+						System.err.println("allergy importing failed");
+
+					}
+				}
+				if (affected == 1) {
+					System.out.println("data successful import");
+				
 				} else {
-					System.err.println("allergy importing failed");
-					
+					System.err.println("no row affected!!");
+				
 				}
 			}
-			if (affected == 1) {
-				System.out.println("data successful import");
-				return true;
-			} else {
-				System.err.println("no row affected!!");
-				return false;
-			}
 		}
+		if(edit ==1){
+			String SQL = "UPDATE Patient SET  Name=?, DOB=?, Gender=?, Address=?, WorkPhone=?, HomePhone=?, EmerContactName=?, EmerContactPhone=?, Weight=?, Height=?, AnnualIncome=? WHERE PatientUsername=?	";
+			ResultSet rs = null;
+
+			try (PreparedStatement stmt = conn.prepareStatement(SQL);) {
+				stmt.setString(12, currentPatient.cp.getPatientUsername());
+				stmt.setString(1, this.nameField.getText());
+				stmt.setString(2, this.birthdateField.getText());
+				stmt.setString(3, this.genderComboBox.getSelectedItem()
+						.toString());
+				stmt.setString(4, this.addressField.getText());
+				stmt.setInt(5, Integer.parseInt(this.workPhoneField.getText()));
+				stmt.setInt(6, Integer.parseInt(this.homePhoneField.getText()));
+				stmt.setString(7, this.emergencynameTextFiled.getText());
+				stmt.setString(8, this.emergencyPhoneTextFiled.getText());
+				stmt.setInt(9, Integer.parseInt(this.weightField.getText()));
+				stmt.setInt(10, Integer.parseInt(this.heightField.getText()));
+				stmt.setString(11, this.incomeField.getText());
+				// stmt.setInt(13,0);
+
+				int affected = stmt.executeUpdate();
+
+				if (affected == 1) {
+					System.out.println("data successful import");
+				
+				} else {
+					System.err.println("no row affected!!");
+				
+				}
+			}
 			
 		}
+	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, null);
