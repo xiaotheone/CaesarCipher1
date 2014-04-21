@@ -326,7 +326,7 @@ public class PatientMessagePanel extends JPanel{
 			
 			
 			if(status.length > 2) {
-				s3.setText((this.getStatus()[2]));
+				s3.setText((	this.getStatus()[2]));
 			}
 		}
 }
