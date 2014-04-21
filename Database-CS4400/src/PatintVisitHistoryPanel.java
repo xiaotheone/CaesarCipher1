@@ -222,8 +222,6 @@ public class PatintVisitHistoryPanel extends JPanel{
 				Notes = rs.getString("Notes");
 				String text = "Medicine Name: " + medname + "    " + "Dosage: " + Dosage 
 						+ "    " + "Duration: " + Duration + "     " + "Notes:" + Notes + "\n";
-//				text = String.format("%" + 15 + "s", text );
-//				resultText += medname + "    " + Dosage + "    " + Duration + "     " + Notes + "\n";
 				resultText += text;
 			}
 		}
