@@ -1,13 +1,24 @@
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+
 import java.awt.Font;
+
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
@@ -26,7 +37,7 @@ public class RecordVisitPanel extends JPanel{
 
 	
 	
-	public RecordVisitPanel(){
+	public RecordVisitPanel(final String patientName){
 		
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
@@ -61,16 +72,20 @@ public class RecordVisitPanel extends JPanel{
 		visitdateField.setEditable(false);
 		visitdateField.setBounds(134, 77, 134, 28);
 		add(visitdateField);
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		System.out.println(dateFormat.format(date).toString());
+		visitdateField.setText(dateFormat.format(date).toString());
 		visitdateField.setColumns(10);
 		
 		patiennameField = new JTextField();
 		patiennameField.setEditable(false);
 		patiennameField.setColumns(10);
 		patiennameField.setBounds(134, 105, 134, 28);
+		patiennameField.setText(patientName);
 		add(patiennameField);
 		
 		systolicField = new JTextField();
-		systolicField.setEditable(false);
 		systolicField.setColumns(10);
 		systolicField.setBounds(193, 136, 44, 28);
 		add(systolicField);
@@ -80,7 +95,6 @@ public class RecordVisitPanel extends JPanel{
 		add(lblDiastolic);
 		
 		diastolicField = new JTextField();
-		diastolicField.setEditable(false);
 		diastolicField.setColumns(10);
 		diastolicField.setBounds(308, 136, 44, 28);
 		add(diastolicField);
@@ -146,6 +160,19 @@ public class RecordVisitPanel extends JPanel{
 		JButton btnSubmit = new JButton("Submit");
 		btnSubmit.setBounds(427, 381, 117, 29);
 		add(btnSubmit);
+		btnSubmit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				try {
+					recordData(getPatientUsername(patientName));
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JButton btnNewButton = new JButton("Add prescription");
 		btnNewButton.setBounds(237, 415, 117, 29);
@@ -154,7 +181,72 @@ public class RecordVisitPanel extends JPanel{
 		JButton btnGoBack = new JButton("GO BACK");
 		btnGoBack.setBounds(6, 415, 96, 29);
 		add(btnGoBack);
+		btnGoBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				removeAll();
+				try {
+					add(new DoctorHomePage());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
+		
+	}
+	
+	public String getPatientUsername(String patientName) throws SQLException{
+		
+		String sql = "SELECT PatientUsername FROM Patient WHERE Name = ?";
+		ResultSet rs = null;
+		
+		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+			
+			stmt.setString(1, patientName);
+			rs = stmt.executeQuery();
+			if(rs.next()){
+				return rs.getString("PatientUsername");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e);
+		}
+		
+		return null;
+	}
+	
+	public void recordData(String patusername) throws SQLException{
+		//insert into visit table
+		String sql = "INSERT INTO Visit(VisitID,DocUsername,PatUsername,DateofVisit,DiastolicPressure, SystolicPressure	) VALUES(last_insert_id(),?,?,?,?,?)";
+		
+		try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+			
+			//stmt.setString(1, currentDoctor.cd.getDoctorUsername());
+			//stmt.setInt(1, statement..)
+			stmt.setString(1, "bchen80");
+			stmt.setString(2, "john20");
+			stmt.setString(3, visitdateField.getText());
+			stmt.setString(4, diastolicField.getText());
+			stmt.setString(5, systolicField.getText());
+			
+			int affected = stmt.executeUpdate();
+			
+			if (affected == 1) {
+				System.out.println("data imported.");
+				JOptionPane.showMessageDialog(getParent(), "data imported");
+			} else {
+				System.out.println("data  not imported.");
+				JOptionPane.showMessageDialog(getParent(), "data not imported");
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e);
+		}
 		
 	}
 	

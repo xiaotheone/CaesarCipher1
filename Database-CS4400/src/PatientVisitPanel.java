@@ -115,6 +115,11 @@ public class PatientVisitPanel extends JPanel{
 		JButton btnRecordAVisit1 = new JButton("Record a Visit");
 		btnRecordAVisit1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (patientField1.getText() != null){
+					String patientName = patientField1.getText().split(" ")[0] + patientField1.getText().split(" ")[1];
+					removeAll();
+					add(new RecordVisitPanel(patientName));
+				}
 			}
 		});
 		btnRecordAVisit1.setBounds(353, 135, 114, 29);
