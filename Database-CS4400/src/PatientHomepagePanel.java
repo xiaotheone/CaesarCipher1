@@ -50,6 +50,14 @@ public class PatientHomepagePanel extends JPanel {
 		JButton btnViewVisitHistory = new JButton("View Visit History");
 		btnViewVisitHistory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new PatintVisitHistoryPanel());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				repaint();
 			}
 		});
 		btnViewVisitHistory.setBounds(74, 163, 150, 35);
