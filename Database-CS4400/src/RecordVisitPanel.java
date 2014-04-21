@@ -34,9 +34,13 @@ public class RecordVisitPanel extends JPanel{
 	private JTextField systolicField;
 	private JTextField diastolicField;
 	private JTextField drugNameField;
-
+	private JTextArea diagnosisArea;
+	private JComboBox comboDay;
+	private JComboBox comboMonth;
+	private JComboBox comboDosage;
+	private JTextArea notesArea;
 	
-	
+	@SuppressWarnings("unchecked")
 	public RecordVisitPanel(final String patientName){
 		
 		try {
@@ -103,7 +107,7 @@ public class RecordVisitPanel extends JPanel{
 		lblDiagnosis.setBounds(40, 170, 82, 16);
 		add(lblDiagnosis);
 		
-		JTextArea diagnosisArea = new JTextArea();
+		diagnosisArea = new JTextArea();
 		diagnosisArea.setBounds(142, 170, 210, 36);
 		add(diagnosisArea);
 		
@@ -124,7 +128,8 @@ public class RecordVisitPanel extends JPanel{
 		lblNewLabel_1.setBounds(40, 303, 61, 16);
 		add(lblNewLabel_1);
 		
-		JComboBox comboDosage = new JComboBox();
+		String[] dosageList = {"1","2","3","4","5"};
+		comboDosage = new JComboBox(dosageList);
 		comboDosage.setBounds(142, 271, 52, 27);
 		add(comboDosage);
 		
@@ -132,7 +137,8 @@ public class RecordVisitPanel extends JPanel{
 		lblPerDay.setBounds(206, 275, 61, 16);
 		add(lblPerDay);
 		
-		JComboBox comboMonth = new JComboBox();
+		String[] monthList = {"1","2","3","4","5"};
+		comboMonth = new JComboBox(monthList);
 		comboMonth.setBounds(142, 299, 52, 27);
 		add(comboMonth);
 		
@@ -140,7 +146,8 @@ public class RecordVisitPanel extends JPanel{
 		lblMonth.setBounds(193, 303, 53, 16);
 		add(lblMonth);
 		
-		JComboBox comboDay = new JComboBox();
+		String[] dayList = {"5","10","15","20","25","30"};
+		comboDay = new JComboBox(dayList);
 		comboDay.setBounds(258, 299, 52, 27);
 		add(comboDay);
 		
@@ -152,7 +159,7 @@ public class RecordVisitPanel extends JPanel{
 		lblNotes.setBounds(40, 337, 61, 16);
 		add(lblNotes);
 		
-		JTextArea notesArea = new JTextArea();
+		notesArea = new JTextArea();
 		notesArea.setLineWrap(true);
 		notesArea.setBounds(134, 337, 218, 73);
 		add(notesArea);
@@ -223,26 +230,55 @@ public class RecordVisitPanel extends JPanel{
 	public void recordData(String patusername) throws SQLException{
 		//insert into visit table
 		String sql = "INSERT INTO Visit(DocUsername,PatUsername,DateofVisit,DiastolicPressure, SystolicPressure	) VALUES(?,?,?,?,?) ";
-		String sql2 = "INSERT INTO Visit_Diagnosis VALUES(?,?)";
+		String sql2 = "INSERT INTO Visit_Diagnosis(VisitID, Diagnosis) VALUES(?,?)";
+		String sql3 = "SELECT VisitID FROM Visit";
+		String sql4 = "INSERT INTO Prescription VALUES(?,?,?,?,?,?)";
+		
 		ResultSet rs = null;
+		int lastID = -1;
+		
 		try(PreparedStatement stmt = conn.prepareStatement(sql);
-				PreparedStatement stmt2 = conn.prepareStatement(sql2)) {
-			
-			//System.out.println(rs.getString("LAST_INSERT_ID()"));
-			//stmt.setString(1, currentDoctor.cd.getDoctorUsername());
-			//stmt.setInt(1, statement..)
-			//rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
-			System.out.println(stmt.executeQuery("SELECT LAST_INSERT_ID() FROM Visit").toString());
+				PreparedStatement stmt2 = conn.prepareStatement(sql2);
+				PreparedStatement stmt3 = conn.prepareStatement(sql3);
+				PreparedStatement stmt4 = conn.prepareStatement(sql4)) {
+
+			rs = stmt3.executeQuery();
+
+			if (rs.next()) {
+				rs.last();
+				lastID = rs.getInt("VisitID") + 1;
+			}
+
+			System.out.println(lastID);
 			stmt.setString(1, "bchen80");
 			stmt.setString(2, "john20");
 			stmt.setString(3, visitdateField.getText());
 			stmt.setString(4, diastolicField.getText());
 			stmt.setString(5, systolicField.getText());
 			
+			if (lastID != -1) {
+				System.out.println("set stmt2");
+				stmt2.setInt(1, lastID);
+				stmt2.setString(2, diagnosisArea.getText());
+				stmt4.setInt(1, lastID);
+				stmt4.setString(2, drugNameField.getText());
+				stmt4.setString(3, comboDosage.getSelectedItem().toString());
+				stmt4.setString(4, new String(comboMonth.getSelectedItem().toString() + "Months " 
+												+ comboDay.getSelectedItem().toString() + "Days "));
+				stmt4.setString(5, notesArea.getText());
+				stmt4.setString(6, "No");
+				
+				
+			}else{
+				System.err.println("It is not a valid VisitID.");
+			}
 			
+
 			int affected = stmt.executeUpdate();
+			int affected2 = stmt2.executeUpdate();
+			int affected3 = stmt4.executeUpdate();
 			
-			if (affected == 1) {
+			if (affected == 1 && affected2 == 1 && affected3 == 1) {
 				System.out.println("data imported.");
 				JOptionPane.showMessageDialog(getParent(), "data imported");
 			} else {
