@@ -37,8 +37,8 @@ import java.awt.event.ActionEvent;
  *
  */
 public class OrderMedicationPanel extends JPanel {
-	
-	
+	private int visitID;
+	private ArrayList savedVisitID = new ArrayList();
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
 	public static BufferedImage image;
 	private JTextField txtMedicationName;
@@ -124,6 +124,7 @@ public class OrderMedicationPanel extends JPanel {
 					String medName = txtMedicationName.getText();
 					if(isPrescribed(medName)) {
 						basket.add(medName);
+						
 						JOptionPane.showMessageDialog(getParent(), "Added to the basket!");
 					}else{
 						JOptionPane.showMessageDialog(getParent(), "Medcine has not been prescribed");
@@ -143,10 +144,22 @@ public class OrderMedicationPanel extends JPanel {
 				if(basket.isEmpty()){
 					JOptionPane.showMessageDialog(getParent(), "Basket is empty");
 				}else{
-					removeAll();
+					
 					try {
-						add(new PaymentInformationPanel());
+					
+						removeAll();
+						PaymentInformationPanel p = new PaymentInformationPanel();
+					
+					    p.MedicineName.addAll(basket);
+					    p.visitID.addAll(savedVisitID);
+						
+						add(p);
+					
+						
 					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
@@ -220,7 +233,7 @@ public class OrderMedicationPanel extends JPanel {
 	 */
 	public boolean  isPrescribed(String medName) throws SQLException{
 		System.out.println(medName);
-		int visitID = getVisitID();
+		visitID = getVisitID();
 		if(visitID == 0){
 			return false;
 		}else{
@@ -257,11 +270,13 @@ public class OrderMedicationPanel extends JPanel {
 			if(rs.next()){
 				visitID = rs.getInt("VisitID");
 				System.out.println("VisitID is " + visitID);
+				this.savedVisitID.add(visitID);
 				return visitID;
 			}else{
 				System.out.println("not found");
 			}
 		}
+		
 		return visitID;
 	}
 	
