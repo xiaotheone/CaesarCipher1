@@ -120,11 +120,11 @@ public class PatintVisitHistoryPanel extends JPanel{
 				}
 			}
 		});
-		btnCheck.setBounds(418, 394, 117, 29);
+		btnCheck.setBounds(427, 415, 117, 29);
 		add(btnCheck);
 		
 		textArea = new JTextArea();
-		textArea.setBounds(53, 281, 415, 87);
+		textArea.setBounds(61, 291, 415, 87);
 		add(textArea);
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
