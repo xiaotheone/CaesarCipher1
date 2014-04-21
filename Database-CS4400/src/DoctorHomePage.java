@@ -44,6 +44,15 @@ public class DoctorHomePage extends JPanel{
 		JButton btnNewButton = new JButton("View Appointment");
 		btnNewButton.setBounds(58, 86, 130, 45);
 		add(btnNewButton);
+		btnNewButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				removeAll();
+				add(new ViewAppointmentPanel());
+			}
+		});
 		
 		JButton btnPatientVisit = new JButton("Patient Visit");
 		btnPatientVisit.setBounds(58, 148, 130, 45);
