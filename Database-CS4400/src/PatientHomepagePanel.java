@@ -41,7 +41,8 @@ public class PatientHomepagePanel extends JPanel {
 		JButton btnMakeAppointment = new JButton("Make Appointment");
 		btnMakeAppointment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				removeAll();
+				add(new PatientMakeAppointmentPanel());
 			}
 		});
 		btnMakeAppointment.setBounds(74, 103, 150, 35);
