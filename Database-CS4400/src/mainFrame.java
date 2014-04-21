@@ -12,7 +12,7 @@ public class mainFrame extends JFrame{
 		setResizable(true);
 		setVisible(true);
 
-		add(new LoginPanel());
+		add(new RecordVisitPanel("John Smith"));
 		repaint();
 	}
 }

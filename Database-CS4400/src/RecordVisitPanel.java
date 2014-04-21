@@ -222,17 +222,23 @@ public class RecordVisitPanel extends JPanel{
 	
 	public void recordData(String patusername) throws SQLException{
 		//insert into visit table
-		String sql = "INSERT INTO Visit(VisitID,DocUsername,PatUsername,DateofVisit,DiastolicPressure, SystolicPressure	) VALUES(last_insert_id(),?,?,?,?,?)";
-		
-		try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+		String sql = "INSERT INTO Visit(DocUsername,PatUsername,DateofVisit,DiastolicPressure, SystolicPressure	) VALUES(?,?,?,?,?) ";
+		String sql2 = "INSERT INTO Visit_Diagnosis VALUES(?,?)";
+		ResultSet rs = null;
+		try(PreparedStatement stmt = conn.prepareStatement(sql);
+				PreparedStatement stmt2 = conn.prepareStatement(sql2)) {
 			
+			//System.out.println(rs.getString("LAST_INSERT_ID()"));
 			//stmt.setString(1, currentDoctor.cd.getDoctorUsername());
 			//stmt.setInt(1, statement..)
+			//rs = stmt.executeQuery("SELECT LAST_INSERT_ID()");
+			System.out.println(stmt.executeQuery("SELECT LAST_INSERT_ID() FROM Visit").toString());
 			stmt.setString(1, "bchen80");
 			stmt.setString(2, "john20");
 			stmt.setString(3, visitdateField.getText());
 			stmt.setString(4, diastolicField.getText());
 			stmt.setString(5, systolicField.getText());
+			
 			
 			int affected = stmt.executeUpdate();
 			
