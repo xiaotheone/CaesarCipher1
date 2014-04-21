@@ -265,7 +265,7 @@ public class DoctorProfilePanel extends JPanel{
 	public boolean  importTime() throws SQLException{
 		
 		
-		String SQL = "INSERT INTO Doctor_Availability (DocUserName, From, To, Day) VALUES (?,?,?,?)";
+		String SQL = "INSERT INTO Doctor_Availability  VALUES (?,?,?,?)";
 		
 		try (PreparedStatement stmt = conn.prepareStatement(SQL);){
 			
@@ -275,7 +275,7 @@ public class DoctorProfilePanel extends JPanel{
 			stmt.setString(4, this.comboWeekday.getSelectedItem().toString());
 
 			int affected2 = stmt.executeUpdate();
-			if (affected2 == 2) {
+			if (affected2 == 1) {
 				System.out.println("Avaliable time imported.");
 				JOptionPane.showMessageDialog(getParent(), "Time imported");
 				return true;
