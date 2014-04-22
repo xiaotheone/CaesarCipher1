@@ -158,6 +158,21 @@ public class PatientHomepagePanel extends JPanel {
 		btnUnreadmessages.setText("" +  count + " unread Messages");
 		add(lblUnreadMessages);
 		
+		JButton btnLogout = new JButton("Log out");
+		btnLogout.setBounds(396, 374, 120, 35);
+		add(btnLogout);
+		btnLogout.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				removeAll();
+				add(new LoginPanel());
+				currentPatient.cp.setPatientUsername("logout");
+				
+				
+			}
+			
+		});
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {
@@ -187,8 +202,5 @@ public class PatientHomepagePanel extends JPanel {
 		}
 		return count;
 	}
-	
-
-
 }
 

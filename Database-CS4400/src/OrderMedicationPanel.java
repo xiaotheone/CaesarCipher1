@@ -135,7 +135,7 @@ public class OrderMedicationPanel extends JPanel {
 				}
 			}
 		});
-		lblAddMedicationTo.setBounds(51, 393, 176, 16);
+		lblAddMedicationTo.setBounds(209, 391, 191, 23);
 		add(lblAddMedicationTo);
 		
 		JButton btnCheckOut = new JButton("Check Out");
@@ -170,6 +170,23 @@ public class OrderMedicationPanel extends JPanel {
 		btnCheckOut.setBounds(403, 388, 117, 29);
 		add(btnCheckOut);
 		
+		JButton btnBack = new JButton("Back");
+		btnBack.setBounds(34, 390, 89, 23);
+		add(btnBack);
+		btnBack.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new PatientHomepagePanel());
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				
+			}
+			
+		});
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {

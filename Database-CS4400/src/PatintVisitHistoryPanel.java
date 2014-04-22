@@ -126,6 +126,21 @@ public class PatintVisitHistoryPanel extends JPanel{
 		textArea = new JTextArea();
 		textArea.setBounds(61, 291, 415, 87);
 		add(textArea);
+		
+		JButton btnBack = new JButton("Back");
+		btnBack.setBounds(30, 401, 89, 23);
+		add(btnBack);
+		btnBack.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new PatientHomepagePanel());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+	});
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {

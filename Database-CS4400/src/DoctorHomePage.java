@@ -101,10 +101,21 @@ public class DoctorHomePage extends JPanel{
 			}
 		});
 		
-		JButton btnClose = new JButton("Close");
+		JButton btnClose = new JButton("Log out");
 		btnClose.setBounds(377, 373, 117, 29);
 		add(btnClose);
-		
+		btnClose.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				removeAll();
+				add(new LoginPanel());
+				currentDoctor.cd.setDoctorUsername("logout");
+				
+				
+			}
+			
+		});
 		JButton btnMessage = new JButton("Unread Message");
 		btnMessage.setBounds(257, 86, 130, 45);
 		add(btnMessage);
