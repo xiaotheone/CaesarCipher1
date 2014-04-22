@@ -250,8 +250,8 @@ public class RecordVisitPanel extends JPanel{
 			}
 
 			System.out.println(lastID);
-			stmt.setString(1, "bchen80");
-			stmt.setString(2, "john20");
+			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
+			stmt.setString(2, getPatientUsename(patiennameField.getText()));
 			stmt.setString(3, visitdateField.getText());
 			stmt.setString(4, diastolicField.getText());
 			stmt.setString(5, systolicField.getText());
@@ -292,6 +292,22 @@ public class RecordVisitPanel extends JPanel{
 		
 	}
 	
+	
+	
+	public String getPatientUsename(String name) throws SQLException {
+
+		String SQL = "SELECT PatientUsername FROM Patient WHERE name = ?";
+		String s = "";
+		try (PreparedStatement stmt = conn.prepareStatement(SQL);) {
+			stmt.setString(1, name);
+			ResultSet rs = stmt.executeQuery();
+			rs.next();
+			s = rs.getString("PatientUsername");
+		}
+
+		return s;
+
+	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, null);
