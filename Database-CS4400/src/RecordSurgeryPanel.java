@@ -36,6 +36,10 @@ public class RecordSurgeryPanel extends JPanel{
 	private JTextField surgeryStartField;
 	private JTextField surgeryCompleteField;
 	private JComboBox comboPatient;
+	private JComboBox comboProcedure;
+	private JTextArea operativeArea;
+	private JComboBox comboNoAss;
+	private JTextArea descriptionArea;
 	private String patientString, patientName, patientPhone;
 	
 	public RecordSurgeryPanel(){
@@ -104,7 +108,7 @@ public class RecordSurgeryPanel extends JPanel{
 		lblPreoperative.setBounds(6, 347, 96, 16);
 		add(lblPreoperative);
 		
-		JTextArea operativeArea = new JTextArea();
+		operativeArea = new JTextArea();
 		operativeArea.setBounds(124, 347, 104, 38);
 		add(operativeArea);
 		
@@ -127,11 +131,11 @@ public class RecordSurgeryPanel extends JPanel{
 		
 		String[] precedure = {"General Physician", "Heart Specialist", "Eye physician", "Orthopedics", "Psychiatry", "Gynecologist"};
 
-		JComboBox comboProcedure = new JComboBox(precedure);
+		comboProcedure = new JComboBox(precedure);
 		comboProcedure.setBounds(114, 247, 114, 27);
 		add(comboProcedure);
 		
-		JComboBox comboNoAss = new JComboBox();
+		comboNoAss = new JComboBox();
 		comboNoAss.setBounds(114, 303, 114, 27);
 		add(comboNoAss);
 		
@@ -166,13 +170,26 @@ public class RecordSurgeryPanel extends JPanel{
 		lblDescription.setBounds(256, 307, 109, 16);
 		add(lblDescription);
 		
-		JTextArea descriptionArea = new JTextArea();
+		descriptionArea = new JTextArea();
 		descriptionArea.setBounds(377, 307, 136, 82);
 		add(descriptionArea);
 		
 		JButton btnRecord = new JButton("Record");
 		btnRecord.setBounds(204, 398, 117, 29);
 		add(btnRecord);
+		btnRecord.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				try {
+					recordSurgery();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					System.err.println(e1);
+				}
+			}
+		});
 		
 		JLabel lblPatientName = new JLabel("Patient Name      Phone Number");
 		lblPatientName.setBounds(10, 103, 200, 21);
@@ -256,6 +273,59 @@ public class RecordSurgeryPanel extends JPanel{
 			System.err.println(e);
 		}
 
+	}
+	
+	public void recordSurgery() throws SQLException{
+		
+		String sql = "SELECT PatUsername FROM Patient WHERE Name = ? AND HomePhone = ?";
+		String sql1 = "INSERT INTO Surgery(CPTCode, SurgeryType) VALUES (?,?)";
+		String sql2 = "INSERT INTO Surgery_preOp_Meds (CPTCode, PreOpMedication) VALUES (?,?)";
+		String sql3 = "INSERT INTO Performs(DocUsername, PatUsername,CPTCode, SurgeryStartTime, "
+				+ "SurgeryEndTime, AnesthesiaStartTime, Complications, NoofAssistants ) VALUES(?,?,?,?,?,?,?,?)";
+		
+		ResultSet rs = null;
+		String PatUsername = null;
+		
+		
+		try (	PreparedStatement stmt = conn.prepareStatement(sql);
+				PreparedStatement stmt1 = conn.prepareStatement(sql1);
+				PreparedStatement stmt2 = conn.prepareStatement(sql2);
+				PreparedStatement stmt3 = conn.prepareStatement(sql3)){
+			
+			
+			if (patientName != null && patientPhone != null){
+				stmt.setString(1, patientName);
+				stmt.setString(2, patientPhone);
+				PatUsername = stmt.executeQuery().getString("PatUsername");
+			}
+			
+			stmt1.setString(1, CPTField.getText());
+			stmt1.setString(2, comboProcedure.getSelectedItem().toString());
+			
+			stmt1.executeUpdate();
+			
+			stmt2.setString(1, CPTField.getText());
+			stmt2.setString(2, operativeArea.getText());
+			stmt2.executeUpdate();
+			
+			stmt3.setString(1, currentDoctor.cd.getDoctorUsername());
+			stmt3.setString(2, PatUsername);
+			stmt3.setString(3, CPTField.getText());
+			stmt3.setString(4, surgeryStartField.getText());
+			stmt3.setString(5, surgeryCompleteField.getText());
+			stmt3.setString(6, anesthesiaField.getText());
+			stmt3.setString(7, descriptionArea.getText());
+			stmt3.setInt(8, comboNoAss.getSelectedIndex()+1);
+			
+			stmt3.executeUpdate();
+			
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e);
+		}
+		
 	}
 	
 	
