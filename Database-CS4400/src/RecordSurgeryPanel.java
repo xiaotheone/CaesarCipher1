@@ -36,6 +36,7 @@ public class RecordSurgeryPanel extends JPanel{
 	private JTextField surgeryStartField;
 	private JTextField surgeryCompleteField;
 	private JComboBox comboPatient;
+	private String patientString, patientName, patientPhone;
 	
 	public RecordSurgeryPanel(){
 		try {
@@ -83,7 +84,7 @@ public class RecordSurgeryPanel extends JPanel{
 		lblNewLabel_1.setBounds(10, 195, 83, 16);
 		add(lblNewLabel_1);
 		
-		JLabel lblSurgeryName = new JLabel("Surgery Name");
+		JLabel lblSurgeryName = new JLabel("Surgeon Name");
 		lblSurgeryName.setBounds(10, 223, 92, 16);
 		add(lblSurgeryName);
 		
@@ -108,11 +109,13 @@ public class RecordSurgeryPanel extends JPanel{
 		add(operativeArea);
 		
 		nametextField = new JTextField();
+		nametextField.setEditable(false);
 		nametextField.setBounds(114, 189, 114, 28);
 		add(nametextField);
 		nametextField.setColumns(10);
 		
 		surgerytextField = new JTextField();
+		surgerytextField.setEditable(false);
 		surgerytextField.setColumns(10);
 		surgerytextField.setBounds(114, 217, 114, 28);
 		add(surgerytextField);
@@ -122,7 +125,9 @@ public class RecordSurgeryPanel extends JPanel{
 		CPTField.setBounds(114, 273, 114, 28);
 		add(CPTField);
 		
-		JComboBox comboProcedure = new JComboBox();
+		String[] precedure = {"General Physician", "Heart Specialist", "Eye physician", "Orthopedics", "Psychiatry", "Gynecologist"};
+
+		JComboBox comboProcedure = new JComboBox(precedure);
 		comboProcedure.setBounds(114, 247, 114, 27);
 		add(comboProcedure);
 		
@@ -176,6 +181,37 @@ public class RecordSurgeryPanel extends JPanel{
 		JButton btnSelect = new JButton("Select");
 		btnSelect.setBounds(228, 125, 117, 29);
 		add(btnSelect);
+		btnSelect.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				patientString = comboPatient.getSelectedItem().toString();
+				System.out.println(patientString);
+				patientName = patientString.split(" ")[0] + " " +patientString.split(" ")[1];
+				patientPhone = patientString.split("    ")[1];
+				System.out.println(patientName + " " + patientPhone);
+				nametextField.setText(patientName);
+			}
+		});
+		
+		JButton btnGoBack = new JButton("GO BACK");
+		btnGoBack.setBounds(29, 403, 95, 29);
+		add(btnGoBack);
+		btnGoBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				removeAll();
+				try {
+					add(new DoctorHomePage());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		comboPatient = new JComboBox();
 		comboPatient.setBounds(10, 126, 218, 27);
@@ -184,26 +220,33 @@ public class RecordSurgeryPanel extends JPanel{
 		
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void searchPatient() throws SQLException{
 		
 		String SQL = "SELECT Name, HomePhone FROM Patient WHERE	Name = ?";
+		String SQL1 = "SELECT Fname, Lname FROM Doctor WHERE DocUsername = ?";
 		List<String> list = new ArrayList<String>();
-		String patientNamePhone = "";
+		String doctorName = currentDoctor.cd.getDoctorUsername();
+		
 		
 		ResultSet rs = null;
+		ResultSet rs1 = null;
 		
-		try (PreparedStatement stmt = conn.prepareStatement(SQL)){
+		try (PreparedStatement stmt = conn.prepareStatement(SQL);
+				PreparedStatement stmt1 = conn.prepareStatement(SQL1)){
 			
 			stmt.setString(1, this.inputPatientField.getText());
-			
+			stmt1.setString(1, doctorName);
 			rs = stmt.executeQuery();
+			rs1 = stmt1.executeQuery();
 
-			while(rs.next()){
+			while(rs.next() && rs1.next()){
 
 				list.add(rs.getString("Name") + "     " + rs.getString("HomePhone"));
 				
 				System.out.println(rs.getString("Name") + rs.getString("HomePhone"));
 			}
+			surgerytextField.setText("Dr. " + rs1.getString("Fname") + " " + rs1.getString("Lname"));
 			String[] temp = new String[list.size()];
 			list.toArray(temp);
 			comboPatient.setModel(new DefaultComboBoxModel(temp));
@@ -214,6 +257,7 @@ public class RecordSurgeryPanel extends JPanel{
 		}
 
 	}
+	
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);

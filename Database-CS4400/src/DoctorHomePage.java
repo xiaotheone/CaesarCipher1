@@ -96,6 +96,15 @@ public class DoctorHomePage extends JPanel{
 		JButton btnRecord = new JButton("Record a surgery");
 		btnRecord.setBounds(58, 205, 130, 45);
 		add(btnRecord);
+		btnRecord.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				removeAll();
+				add(new RecordSurgeryPanel());
+			}
+		});
 		
 		JButton btnCommunicate = new JButton("Communicate");
 		btnCommunicate.addActionListener(new ActionListener() {
