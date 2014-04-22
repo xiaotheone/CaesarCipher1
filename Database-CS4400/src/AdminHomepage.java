@@ -2,6 +2,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -12,6 +13,8 @@ import java.awt.Font;
 import javax.swing.JButton;
 
 import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * The class contains the home page of administrative
@@ -41,6 +44,17 @@ public class AdminHomepage extends JPanel{
 		add(btnNewButton);
 		
 		JButton btnDoctorPerformReport = new JButton("Doctor Perform Report");
+		btnDoctorPerformReport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new DoctorPerformanceReportPanel());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnDoctorPerformReport.setBackground(new Color(255, 245, 238));
 		btnDoctorPerformReport.setBounds(183, 171, 140, 45);
 		add(btnDoctorPerformReport);
