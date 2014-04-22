@@ -166,6 +166,26 @@ public class doctorMessagePanel extends JPanel{
 		JButton btnMarkAsRead = new JButton("Mark As Read");
 		btnMarkAsRead.setBounds(333, 64, 133, 31);
 		add(btnMarkAsRead);
+		
+		JButton btnMarkAsUnread = new JButton("Mark As Unread");
+		btnMarkAsUnread.setBounds(192, 64, 133, 31);
+		add(btnMarkAsUnread);
+		
+		btnMarkAsUnread.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				try {
+					markAsUnread();
+					display();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		});
 		btnMarkAsRead.addActionListener(new ActionListener() {
 
 			@Override
@@ -360,6 +380,38 @@ public class doctorMessagePanel extends JPanel{
 		}
 		return sender;
 	}
+	
+	public boolean markAsUnread() throws SQLException{
+		int affected;
+		int affected2;
+		String SQL = "UPDATE Sends_messageToDoc SET	Status = \"0\"  WHERE	DocUsername =?";
+	try (PreparedStatement stmt = conn.prepareStatement(SQL);) {	
+		stmt.setString(1,currentDoctor.cd.getDoctorUsername());
+
+		
+		affected = stmt.executeUpdate();
+	
+	}
+	String SQL2 = "UPDATE CommunicatesWith SET	Status = \"0\"  WHERE	Doc_Receiver =?";
+	try (PreparedStatement stmt = conn.prepareStatement(SQL2);) {	
+		stmt.setString(1,currentDoctor.cd.getDoctorUsername());
+
+		
+	    affected2 = stmt.executeUpdate();
+		if (affected == 1 && affected2==1) {
+			System.out.println("marked");
+		
+
+			return true;
+		} else {
+			System.err.println("error");
+	
+			return false;
+		}
+	}
+	
+	
+}
 		public boolean markAsRead() throws SQLException{
 			int affected;
 			int affected2;

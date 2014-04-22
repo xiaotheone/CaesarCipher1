@@ -2,6 +2,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.Timer;
 
 import java.awt.Font;
 import java.awt.Graphics;
@@ -29,17 +30,42 @@ public class DoctorHomePage extends JPanel{
 	
 	public static BufferedImage image;
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
-
-	
+	public Timer t = new Timer(0, null);
+	private JButton btnMessage;
 	public DoctorHomePage() throws SQLException{
 		
 		setSize(550, 450);
 		setLayout(null);
 		
+		
 		JLabel lblNewLabel = new JLabel("Homepage for Doctor");
 		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
 		lblNewLabel.setBounds(176, 30, 173, 34);
 		add(lblNewLabel);
+		
+		
+		
+		t.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				int count = 0;
+				try {
+					count = getUnreadMessage();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				btnMessage.setText(count + " unread Messages");
+				
+				if(btnMessage.getText().toString().charAt(2) == 'u'){
+					t.stop();
+				
+				}
+			}
+			
+		});
 		
 		JButton btnNewButton = new JButton("View Appointment");
 		btnNewButton.setBounds(58, 86, 130, 45);
@@ -116,8 +142,8 @@ public class DoctorHomePage extends JPanel{
 			}
 			
 		});
-		JButton btnMessage = new JButton("Unread Message");
-		btnMessage.setBounds(257, 86, 130, 45);
+		btnMessage = new JButton("Unread Message");
+		btnMessage.setBounds(257, 86, 153, 45);
 		add(btnMessage);
 		btnMessage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -131,17 +157,14 @@ public class DoctorHomePage extends JPanel{
 				repaint();
 			}
 		});
-		int count = getUnreadMessage();
-		System.out.println("" + count + "unread messages");
-		btnMessage.setText("" +  count + " unread Messages");
 
-		
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 		}
-		
+		t.start();
+
 	}
 	
 	

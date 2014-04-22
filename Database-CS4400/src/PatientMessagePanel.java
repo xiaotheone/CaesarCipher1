@@ -176,6 +176,26 @@ public class PatientMessagePanel extends JPanel{
 		JButton btnMarkAsRead = new JButton("Mark As Read");
 		btnMarkAsRead.setBounds(333, 64, 133, 31);
 		add(btnMarkAsRead);
+		
+		JButton btnMarkAsUnread = new JButton("Mark As Unread");
+		btnMarkAsUnread.setBounds(183, 64, 133, 31);
+		add(btnMarkAsUnread);
+		btnMarkAsUnread.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				try {
+					markAsUnread();
+					display();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		});
+		
 		btnMarkAsRead.addActionListener(new ActionListener() {
 
 			@Override
@@ -314,6 +334,26 @@ public class PatientMessagePanel extends JPanel{
 			}
 		}
 	}
+		public boolean markAsUnread() throws SQLException{
+			String SQL = "UPDATE SendsMessageToPatient SET	Status = ? WHERE	PatUsername =?";
+		try (PreparedStatement stmt = conn.prepareStatement(SQL);) {	
+			stmt.setString(1, "0");
+			stmt.setString(2, currentPatient.cp.getPatientUsername());
+			
+			
+			int affected = stmt.executeUpdate();
+			if (affected == 1) {
+				System.out.println("unmarked");
+
+				return true;
+			} else {
+			
+				return false;
+			}
+		}
+	}
+		
+		
 		public void display(){
 			String[] status = getStatus();
 			if(status.length > 0){

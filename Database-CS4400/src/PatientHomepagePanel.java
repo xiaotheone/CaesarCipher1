@@ -2,6 +2,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import javax.swing.Timer;
 
 import java.awt.Graphics;
 import java.awt.event.ActionListener;
@@ -28,12 +29,37 @@ import java.util.List;
 public class PatientHomepagePanel extends JPanel {
 	
 	public static BufferedImage image;
+	public Timer t = new Timer(0, null);
+	private JButton btnUnreadmessages;
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
 	public PatientHomepagePanel() throws SQLException {
 		setSize(550, 450);
 		setLayout(null);
 		
+		
+		t.addActionListener(new ActionListener(){
 
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				int count = 0;
+				try {
+					count = getUnreadMessage();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				btnUnreadmessages.setText(count + " unread Messages");
+				
+				if(btnUnreadmessages.getText().toString().charAt(2) == 'u'){
+					t.stop();
+				
+				}
+			}
+			
+		});
+
+		
 		JLabel lblPatientHomepage = new JLabel("Patient Homepage");
 		lblPatientHomepage.setBounds(214, 25, 136, 16);
 		add(lblPatientHomepage);
@@ -132,7 +158,7 @@ public class PatientHomepagePanel extends JPanel {
 			
 		});
 		
-		JButton btnUnreadmessages = new JButton("Unread Messages");
+		 btnUnreadmessages = new JButton("Unread Messages");
 		btnUnreadmessages.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				removeAll();
@@ -146,17 +172,15 @@ public class PatientHomepagePanel extends JPanel {
 			}
 		});
 		btnUnreadmessages.setBounds(321, 219, 150, 35);
-//		int count = getUnreadMessage();
-//		System.out.println("" + count + "unread messages");
-//		btnUnreadmessages.setText("" +  count + " unread Messages");
+		int count = getUnreadMessage();
+	
+	
 		add(btnUnreadmessages);
 		
-		JLabel lblUnreadMessages = new JLabel("Unread Messages");
-		lblUnreadMessages.setBounds(339, 287, 109, 16);
-		int count = getUnreadMessage();
-		System.out.println("" + count + "unread messages");
-		btnUnreadmessages.setText("" +  count + " unread Messages");
-		add(lblUnreadMessages);
+	
+	
+		btnUnreadmessages.setText("unread Messages");
+	
 		
 		JButton btnLogout = new JButton("Log out");
 		btnLogout.setBounds(396, 374, 120, 35);
@@ -172,12 +196,15 @@ public class PatientHomepagePanel extends JPanel {
 				
 			}
 			
+			
 		});
+		
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {
 		}
-		
+		t.start();
+
 	}
 	
 	public void paintComponent(Graphics g) {
