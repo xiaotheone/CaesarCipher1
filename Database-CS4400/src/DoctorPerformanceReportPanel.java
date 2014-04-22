@@ -1,3 +1,5 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -10,7 +12,10 @@ import java.sql.SQLException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 /**
  * 
@@ -24,142 +29,72 @@ public class DoctorPerformanceReportPanel extends JPanel{
 	
 	public static BufferedImage image;
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
-	private JTextField tfSpecialty1;
-	private JTextField tfSpecialty2;
-	private JTextField tfSpecialty3;
-	private JTextField tfSpecialty4;
-	private JTextField tfSpeciaty5;
-	private JTextField tfSpecialty6;
-	private JTextField tfRate1;
-	private JTextField tfRate2;
-	private JTextField tfRate3;
-	private JTextField tfRate4;
-	private JTextField tfRate5;
-	private JTextField tfRate6;
-	private JTextField tfNum1;
-	private JTextField tfNum2;
-	private JTextField tfNum3;
-	private JTextField tfNum4;
-	private JTextField tfNum5;
-	private JTextField tfNum6;
+	private String[] columnNames = new String[3];
+	
+	private Object[][] data;
+	private int rows=0;
+	private JTable table;
 	public DoctorPerformanceReportPanel() throws SQLException {
 		setSize(550, 450);
-		setLayout(null);
+		setLayout(new BorderLayout());
+		
+		
+		
 		
 		JLabel lblDoctorPerformanceReport = new JLabel("Doctor Performance Report");
 		lblDoctorPerformanceReport.setBounds(159, 36, 211, 16);
 		add(lblDoctorPerformanceReport);
 		
-		JLabel lblSpecialty = new JLabel("Specialty");
-		lblSpecialty.setBounds(47, 112, 61, 16);
-		add(lblSpecialty);
-		
-		JLabel lblAverageRating = new JLabel("Average Rating");
-		lblAverageRating.setBounds(192, 112, 94, 16);
-		add(lblAverageRating);
-		
-		JLabel lblNumberOfSugeries = new JLabel("Number of Sugeries Performed");
-		lblNumberOfSugeries.setBounds(330, 112, 192, 16);
-		add(lblNumberOfSugeries);
-		
-		tfSpecialty1 = new JTextField();
-		tfSpecialty1.setBounds(18, 147, 134, 28);
-		add(tfSpecialty1);
-		tfSpecialty1.setColumns(10);
-		
-		tfSpecialty2 = new JTextField();
-		tfSpecialty2.setColumns(10);
-		tfSpecialty2.setBounds(18, 187, 134, 28);
-		add(tfSpecialty2);
-		
-		tfSpecialty3 = new JTextField();
-		tfSpecialty3.setColumns(10);
-		tfSpecialty3.setBounds(18, 227, 134, 28);
-		add(tfSpecialty3);
-		
-		tfSpecialty4 = new JTextField();
-		tfSpecialty4.setColumns(10);
-		tfSpecialty4.setBounds(18, 267, 134, 28);
-		add(tfSpecialty4);
-		
-		tfSpeciaty5 = new JTextField();
-		tfSpeciaty5.setColumns(10);
-		tfSpeciaty5.setBounds(18, 307, 134, 28);
-		add(tfSpeciaty5);
-		
-		tfSpecialty6 = new JTextField();
-		tfSpecialty6.setColumns(10);
-		tfSpecialty6.setBounds(18, 352, 134, 28);
-		add(tfSpecialty6);
-		
-		tfRate1 = new JTextField();
-		tfRate1.setBounds(202, 147, 66, 28);
-		add(tfRate1);
-		tfRate1.setColumns(10);
-		
-		tfRate2 = new JTextField();
-		tfRate2.setColumns(10);
-		tfRate2.setBounds(202, 187, 66, 28);
-		add(tfRate2);
-		
-		tfRate3 = new JTextField();
-		tfRate3.setColumns(10);
-		tfRate3.setBounds(202, 227, 66, 28);
-		add(tfRate3);
-		
-		tfRate4 = new JTextField();
-		tfRate4.setColumns(10);
-		tfRate4.setBounds(202, 267, 66, 28);
-		add(tfRate4);
-		
-		tfRate5 = new JTextField();
-		tfRate5.setColumns(10);
-		tfRate5.setBounds(202, 307, 66, 28);
-		add(tfRate5);
-		
-		tfRate6 = new JTextField();
-		tfRate6.setColumns(10);
-		tfRate6.setBounds(202, 352, 66, 28);
-		add(tfRate6);
-		
-		tfNum1 = new JTextField();
-		tfNum1.setColumns(10);
-		tfNum1.setBounds(370, 147, 66, 28);
-		add(tfNum1);
-		
-		tfNum2 = new JTextField();
-		tfNum2.setColumns(10);
-		tfNum2.setBounds(370, 187, 66, 28);
-		add(tfNum2);
-		
-		tfNum3 = new JTextField();
-		tfNum3.setColumns(10);
-		tfNum3.setBounds(370, 227, 66, 28);
-		add(tfNum3);
-		
-		tfNum4 = new JTextField();
-		tfNum4.setColumns(10);
-		tfNum4.setBounds(370, 267, 66, 28);
-		add(tfNum4);
-		
-		tfNum5 = new JTextField();
-		tfNum5.setColumns(10);
-		tfNum5.setBounds(370, 307, 66, 28);
-		add(tfNum5);
-		
-		tfNum6 = new JTextField();
-		tfNum6.setColumns(10);
-		tfNum6.setBounds(370, 352, 66, 28);
-		add(tfNum6);
-		
+	    columnNames[0]= "Specialty";
+	    columnNames[1]= "Average Rating";
+	    columnNames[2]= "Surgery performed";
+
+
+		getrows();
+		data = new Object[rows][3];
+		for ( int i =0; i<data.length;i++){
+			for ( int j =0; j<data[i].length;j++)
+				data[i][j] = new String ("0");
+		}
+
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {
 		}
-		
+
 		displayRating();
 		displaySurgeryNum();
+
+		table = new JTable(data, columnNames);
+		table.setBounds(37, 79, 449, 344);
+
+		table.setFillsViewportHeight(true);
+
+		table.getTableHeader();
+	
+		table.setRowHeight(30);
+	
+		
+		  JScrollPane scrollPane = new JScrollPane(table);
+		  scrollPane.setPreferredSize(new Dimension(500,table.getHeight()));
+		  scrollPane.setBounds(37, 79, 449, 344);
+		    TableColumn column = null;
+		    for (int i = 0; i < 3; i++) {
+		        column = table.getColumnModel().getColumn(i);
+		        if (i == 2) {
+		            column.setPreferredWidth(100); //sport column is bigger
+		        } else {
+		            column.setPreferredWidth(50);
+		        }
+		    }  
+
+		this.add(scrollPane);
+		
+		System.out.println("this is " + table.getColumnName(1));
+		System.out.println("this is " + table.getWidth() + " " +  table.getHeight());
 	}
+	
+	
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -167,20 +102,50 @@ public class DoctorPerformanceReportPanel extends JPanel{
 		repaint();
 	}
 	
-	
+	public void getrows() {
+		String specialty = "";
+		int rating = 0;
+		String SQL = "SELECT Specialty, AVG(Rating) AS AR FROM Doctor, Doctor_Rating WHERE Doctor.DocUsername = Doctor_Rating.DocUsername GROUP BY Specialty";
+		try (PreparedStatement stmt = conn.prepareStatement(SQL);) {
+			ResultSet rs = stmt.executeQuery();
+			rs.last();
+			rows = rs.getRow();
+			System.out.println(" there are " + rows +"rows ");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Error");
+		}
+	}
+		
 	public void displayRating(){
 		String specialty = "";
 		int rating = 0;
 		String SQL = "SELECT Specialty, AVG(Rating) AS AR FROM Doctor, Doctor_Rating WHERE Doctor.DocUsername = Doctor_Rating.DocUsername GROUP BY Specialty";
+		
+		Object[][] s = new Object[rows][2]; 
 		try(PreparedStatement stmt = conn.prepareStatement(SQL);){
 			ResultSet rs = stmt.executeQuery();
+	
 			while(rs.next()){
 				specialty = rs.getString("Specialty");
 				rating = rs.getInt("AR");
+				s[rs.getRow()-1][0]= new String(specialty);
+			
+				s[rs.getRow()-1][1] = new Integer(rating);
 				
-				System.out.println("Specialty: " + specialty + "   Rating: " + rating );
-			}
+		
 
+				
+			}
+		
+			for(int x =0;x<s.length;x++){
+				for(int y =0;y<s[x].length;y++){
+					System.out.println(s[x][y]);
+					data[x][y]= s[x][y];
+				}
+			}
+		
 		} catch (SQLException e){
 			e.printStackTrace();
 			System.out.println("Error");
@@ -190,15 +155,44 @@ public class DoctorPerformanceReportPanel extends JPanel{
 	public void displaySurgeryNum() throws SQLException{
 		int count = 0;
 		String specialty = "";
+		
+
+
+		
+		
 		String SQL = "SELECT Specialty, COUNT(*) AS C FROM Doctor, Performs WHERE Doctor.DocUsername = Performs.DocUsername GROUP BY Specialty";
 		try(PreparedStatement stmt = conn.prepareStatement(SQL);){
 			ResultSet rs = stmt.executeQuery();
-			while(rs.next()){
+			rs.last();
+			Object[][] s = new Object[rs.getRow()][2]; 
+			for ( int i =0; i<s.length;i++){
+				for ( int j =0; j<s[i].length;j++)
+					s[i][j] = new String ("default");
+			}
+			rs.first();
+			do{
 				specialty = rs.getString("Specialty");
 				count = rs.getInt("C");
+				s[rs.getRow()-1][0]= new String(specialty);
 				
-				System.out.println("Specialty: " + specialty + "   Nums: " + count );
+				s[rs.getRow()-1][1] = new Integer(count);
+				
+			
+				
+			}while(rs.next());
+
+
+
+		
+			for(int x =0;x<data.length;x++){
+				
+				
+					for(int y =0;y<s.length;y++)
+					if(data[x][0].equals( s[y][0]))
+					data[x][2]= s[y][1];
+			
+				}
 			}
 		}
-	}
+	
 }
