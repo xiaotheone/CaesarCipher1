@@ -39,6 +39,17 @@ public class AdminHomepage extends JPanel{
 		add(lblNewLabel);
 		
 		JButton btnNewButton = new JButton("Billing");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new CreateBillPanel());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnNewButton.setBackground(new Color(255, 248, 220));
 		btnNewButton.setBounds(183, 105, 140, 45);
 		add(btnNewButton);
