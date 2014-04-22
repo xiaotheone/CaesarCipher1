@@ -144,6 +144,9 @@ public class ViewAppointmentPanel extends JPanel{
 			stmt.setString(2, currentDate);
 			rs = stmt.executeQuery();			
 			
+			if (!rs.next()){
+				textArea.append("No Appointment today!");
+			}
 			while(rs.next()) {
 				
 				textArea.append("Patient Name: " + rs.getString("PatientUsername") +" || " + "Scheduled Time: " + rs.getString("Time") +"\n");
