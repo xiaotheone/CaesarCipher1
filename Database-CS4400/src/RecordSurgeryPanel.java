@@ -18,6 +18,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JTable;
@@ -135,7 +136,8 @@ public class RecordSurgeryPanel extends JPanel{
 		comboProcedure.setBounds(114, 247, 114, 27);
 		add(comboProcedure);
 		
-		comboNoAss = new JComboBox();
+		String[] AssistantNO = {"1","2","3","4","5"};
+		comboNoAss = new JComboBox(AssistantNO);
 		comboNoAss.setBounds(114, 303, 114, 27);
 		add(comboNoAss);
 		
@@ -243,8 +245,8 @@ public class RecordSurgeryPanel extends JPanel{
 		String SQL = "SELECT Name, HomePhone FROM Patient WHERE	Name = ?";
 		String SQL1 = "SELECT Fname, Lname FROM Doctor WHERE DocUsername = ?";
 		List<String> list = new ArrayList<String>();
-		String doctorName = currentDoctor.cd.getDoctorUsername();
 		
+		String doctorName = currentDoctor.cd.getDoctorUsername();
 		
 		ResultSet rs = null;
 		ResultSet rs1 = null;
@@ -254,6 +256,8 @@ public class RecordSurgeryPanel extends JPanel{
 			
 			stmt.setString(1, this.inputPatientField.getText());
 			stmt1.setString(1, doctorName);
+			
+			System.out.println("here1 " + doctorName);
 			rs = stmt.executeQuery();
 			rs1 = stmt1.executeQuery();
 
@@ -277,11 +281,10 @@ public class RecordSurgeryPanel extends JPanel{
 	
 	public void recordSurgery() throws SQLException{
 		
-		String sql = "SELECT PatUsername FROM Patient WHERE Name = ? AND HomePhone = ?";
+		String sql = "SELECT PatientUsername FROM Patient WHERE Name = ? AND HomePhone = ?";
 		String sql1 = "INSERT INTO Surgery(CPTCode, SurgeryType) VALUES (?,?)";
-		String sql2 = "INSERT INTO Surgery_preOp_Meds (CPTCode, PreOpMedication) VALUES (?,?)";
-		String sql3 = "INSERT INTO Performs(DocUsername, PatUsername,CPTCode, SurgeryStartTime, "
-				+ "SurgeryEndTime, AnesthesiaStartTime, Complications, NoofAssistants ) VALUES(?,?,?,?,?,?,?,?)";
+		String sql2 = "INSERT INTO Surgery_preOp_Medication (CPTCode, PreOpMedication) VALUES (?,?)";
+		String sql3 = "INSERT INTO Performs(DocUsername, PatUsername, CPTCode, SurgeryStartTime, SurgeryEndTime, AnesthesiaStartTime, Complications, NOofAssistants) VALUES(?,?,?,?,?,?,?,?)";
 		
 		ResultSet rs = null;
 		String PatUsername = null;
@@ -294,19 +297,23 @@ public class RecordSurgeryPanel extends JPanel{
 			
 			
 			if (patientName != null && patientPhone != null){
+				System.out.println("Here");
 				stmt.setString(1, patientName);
 				stmt.setString(2, patientPhone);
-				PatUsername = stmt.executeQuery().getString("PatUsername");
+				rs = stmt.executeQuery();
+				if(rs.next())
+					PatUsername = rs.getString("PatientUsername");
+				System.out.println(PatUsername);
 			}
 			
 			stmt1.setString(1, CPTField.getText());
 			stmt1.setString(2, comboProcedure.getSelectedItem().toString());
 			
-			stmt1.executeUpdate();
+			int affected1 = stmt1.executeUpdate();
 			
 			stmt2.setString(1, CPTField.getText());
 			stmt2.setString(2, operativeArea.getText());
-			stmt2.executeUpdate();
+			int affected2 = stmt2.executeUpdate();
 			
 			stmt3.setString(1, currentDoctor.cd.getDoctorUsername());
 			stmt3.setString(2, PatUsername);
@@ -317,9 +324,14 @@ public class RecordSurgeryPanel extends JPanel{
 			stmt3.setString(7, descriptionArea.getText());
 			stmt3.setInt(8, comboNoAss.getSelectedIndex()+1);
 			
-			stmt3.executeUpdate();
+			int affected3 = stmt3.executeUpdate();
 			
-			
+			if (affected1 == 1 && affected2 == 1 && affected3 == 1) {
+				JOptionPane.showMessageDialog(getParent(), "Surgery imported");
+			}
+			else{
+				JOptionPane.showMessageDialog(getParent(), "Surgery not imported");
+			}
 			
 		} catch (Exception e) {
 			// TODO: handle exception
