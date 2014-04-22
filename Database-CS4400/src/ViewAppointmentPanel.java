@@ -8,6 +8,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -111,10 +114,46 @@ public class ViewAppointmentPanel extends JPanel{
 					add(new DoctorHomePage());
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					System.err.println(e1);
 				}
 			}
 		});
+		
+		
+		try {
+			viewCurrentDate();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			System.err.println(e1);
+		}
+	}
+	
+	public void viewCurrentDate() throws SQLException{
+		
+		String SQL = "SELECT PatientUsername , Time FROM Appointments WHERE	DocUsername = ? AND Date = ?";
+		ResultSet rs = null;
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		String currentDate = dateFormat.format(date).toString();
+
+		
+		try (PreparedStatement stmt = conn.prepareStatement(SQL)){
+			
+			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
+			stmt.setString(2, currentDate);
+			rs = stmt.executeQuery();			
+			
+			while(rs.next()) {
+				
+				textArea.append("Patient Name: " + rs.getString("PatientUsername") +" || " + "Scheduled Time: " + rs.getString("Time") +"\n");
+			} 
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e);
+		}
+		
 	}
 	
 	public boolean getAppment() throws SQLException{
@@ -130,11 +169,7 @@ public class ViewAppointmentPanel extends JPanel{
 			stmt.setString(2, date);
 			
 			rs = stmt.executeQuery();
-			
-			System.out.println(date);
-			System.out.println("getting result");
-			
-			
+						
 			while(rs.next()) {
 				
 				textArea.append("Patient Name: " + rs.getString("PatientUsername") +" || " + "Scheduled Time: " + rs.getString("Time") +"\n");
