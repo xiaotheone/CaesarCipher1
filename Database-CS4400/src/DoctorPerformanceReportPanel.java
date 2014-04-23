@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
+import javax.swing.JButton;
 
 /**
  * 
@@ -36,7 +39,7 @@ public class DoctorPerformanceReportPanel extends JPanel{
 	private JTable table;
 	public DoctorPerformanceReportPanel() throws SQLException {
 		setSize(550, 450);
-		setLayout(new BorderLayout());
+		setLayout(null);
 		
 		
 		
@@ -89,6 +92,21 @@ public class DoctorPerformanceReportPanel extends JPanel{
 		    }  
 
 		this.add(scrollPane);
+		
+		JButton btnBack = new JButton("Back");
+		btnBack.setBounds(37, 420, 115, 30);
+		add(btnBack);
+		btnBack.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				removeAll();
+				add(new AdminHomepage());
+			
+				
+			}
+			
+		});
 		
 		System.out.println("this is " + table.getColumnName(1));
 		System.out.println("this is " + table.getWidth() + " " +  table.getHeight());
@@ -194,5 +212,4 @@ public class DoctorPerformanceReportPanel extends JPanel{
 				}
 			}
 		}
-	
 }
