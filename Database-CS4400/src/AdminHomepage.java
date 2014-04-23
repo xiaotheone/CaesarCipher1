@@ -71,6 +71,12 @@ public class AdminHomepage extends JPanel{
 		add(btnDoctorPerformReport);
 		
 		JButton btnSurgeryReport = new JButton("Surgery Report");
+		btnSurgeryReport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				add(new AdminSurgeryPerformedReportPanel());
+			}
+		});
 		btnSurgeryReport.setBackground(new Color(255, 245, 238));
 		btnSurgeryReport.setBounds(183, 228, 140, 45);
 		add(btnSurgeryReport);
