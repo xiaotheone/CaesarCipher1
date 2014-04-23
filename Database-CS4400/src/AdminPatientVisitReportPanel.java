@@ -198,57 +198,35 @@ public class AdminPatientVisitReportPanel extends JPanel{
 						+ "FROM Doctor JOIN Visit ON Doctor.DocUsername = Visit.DocUsername "
 						+ "WHERE MONTH(DateofVisit) = ? AND YEAR(DateofVisit) = ? "
 						+ "GROUP BY Doctor.DocUsername";
-		int total;
+
 		int[] s3 = new int[getrows()];
-		try(PreparedStatement stmt = conn.prepareStatement(SQL2);){
+		try (PreparedStatement stmt = conn.prepareStatement(SQL2);) {
 			stmt.setString(1, CbMonth.getSelectedItem().toString());
 			stmt.setString(2, CbYear.getSelectedItem().toString());
 			ResultSet rs = stmt.executeQuery();
-			while(rs.next()){
+			while (rs.next()) {
 				Fname = rs.getString("Fname");
 				Lname = rs.getString("Lname");
 				visitBill = rs.getInt("TotalBill");
-				System.out.println("Doctor Name: " + Fname + " " + Lname + "   total Visit Bill: " + visitBill );
-		
-				s3[rs.getRow()-1]= visitBill;
-				
-			}
-		}
-		
-		//get sugery bill
-		int surgeryBill = 0;
-		String SQL3 = "SELECT Fname, Lname, SUM(CostofSurgery) AS TotalSurgeryBill "
-						+ "FROM Doctor JOIN Performs on Doctor.DocUsername = Performs.DocUsername "
-						+ "JOIN Visit ON Doctor.DocUsername = Visit.DocUsername "
-						+ "JOIN Surgery ON Performs.CPTCode = Surgery.CPTCode "
-						+ "WHERE MONTH(DateofVisit) = ? AND YEAR(DateofVisit) = ? "
-						+ "GROUP BY Doctor.DocUsername";
-		
-		try(PreparedStatement stmt = conn.prepareStatement(SQL3);){
-			stmt.setString(1, CbMonth.getSelectedItem().toString());
-			stmt.setString(2, CbYear.getSelectedItem().toString());
-			ResultSet rs = stmt.executeQuery();
-			while(rs.next()){
-				Fname = rs.getString("Fname");
-				Lname = rs.getString("Lname");
-				surgeryBill = rs.getInt("TotalSurgeryBill");
-				System.out.println("Doctor Name: " + Fname + " " + Lname + "   total Surgery Bill: " + surgeryBill );
-				s3[rs.getRow()-1] += surgeryBill;
-			}
-			
-			
-			for(int x =0;x<s3.length;x++){
+				System.out.println("Doctor Name: " + Fname + " " + Lname
+						+ "   total Visit Bill: " + visitBill);
 
-					data[x][3]= s3[x];
-				}
+				s3[rs.getRow() - 1] = visitBill;
+
+			}
+			for (int x = 0; x < s3.length; x++) {
+
+				data[x][3] = s3[x];
+			}
 		}
-		
+
 	}
-	public void addTable() throws SQLException{
 
-	    columnNames[0]= "Doctor Name";
-	    columnNames[1]= "No of patient seen";
-	    columnNames[2]= "prescription written";
+	public void addTable() throws SQLException {
+
+		columnNames[0] = "Doctor Name";
+		columnNames[1] = "No of patient seen";
+		columnNames[2] = "prescription written";
 	    columnNames[3]= "Total billing $";
 	    rows =getrows();
 		data = new Object[rows][4];
