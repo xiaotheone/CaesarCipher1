@@ -76,6 +76,17 @@ public class AdminHomepage extends JPanel{
 		add(btnSurgeryReport);
 		
 		JButton btnPatientVisit = new JButton("Patient Visit Report");
+		btnPatientVisit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				try {
+					add(new AdminPatientVisitReportPanel());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnPatientVisit.setBackground(new Color(255, 245, 238));
 		btnPatientVisit.setBounds(183, 285, 140, 45);
 		add(btnPatientVisit);
