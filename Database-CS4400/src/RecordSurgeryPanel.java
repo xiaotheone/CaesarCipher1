@@ -208,7 +208,7 @@ public class RecordSurgeryPanel extends JPanel{
 				patientString = comboPatient.getSelectedItem().toString();
 				System.out.println(patientString);
 				patientName = patientString.split(" ")[0] + " " +patientString.split(" ")[1];
-				patientPhone = patientString.split("    ")[1];
+				patientPhone = patientString.split(" -")[1];
 				System.out.println(patientName + " " + patientPhone);
 				nametextField.setText(patientName);
 			}
@@ -263,7 +263,7 @@ public class RecordSurgeryPanel extends JPanel{
 
 			while(rs.next() && rs1.next()){
 
-				list.add(rs.getString("Name") + "     " + rs.getString("HomePhone"));
+				list.add(rs.getString("Name") + " -" + rs.getString("HomePhone"));
 				
 				System.out.println(rs.getString("Name") + rs.getString("HomePhone"));
 			}
@@ -282,12 +282,13 @@ public class RecordSurgeryPanel extends JPanel{
 	public void recordSurgery() throws SQLException{
 		
 		String sql = "SELECT PatientUsername FROM Patient WHERE Name = ? AND HomePhone = ?";
-		String sql1 = "INSERT INTO Surgery(CPTCode, SurgeryType) VALUES (?,?)";
+		String sql1 = "INSERT INTO Surgery(CPTCode, SurgeryType, CostofSurgery) VALUES (?,?,?)";
 		String sql2 = "INSERT INTO Surgery_preOp_Medication (CPTCode, PreOpMedication) VALUES (?,?)";
 		String sql3 = "INSERT INTO Performs(DocUsername, PatUsername, CPTCode, SurgeryStartTime, SurgeryEndTime, AnesthesiaStartTime, Complications, NOofAssistants) VALUES(?,?,?,?,?,?,?,?)";
 		
 		ResultSet rs = null;
-		String PatUsername = null;
+		String PatUsername = "";
+		int surgeryCost = 5000;
 		
 		
 		try (	PreparedStatement stmt = conn.prepareStatement(sql);
@@ -303,11 +304,16 @@ public class RecordSurgeryPanel extends JPanel{
 				rs = stmt.executeQuery();
 				if(rs.next())
 					PatUsername = rs.getString("PatientUsername");
-				System.out.println(PatUsername);
+				System.out.println("PatUsername: " +PatUsername);
+			}
+			
+			if(isLowIncome(PatUsername)){
+				surgeryCost = (int) (5000 * 0.5);
 			}
 			
 			stmt1.setString(1, CPTField.getText());
-			stmt1.setString(2, comboProcedure.getSelectedItem().toString());
+			stmt1.setString(2, comboProcedure.getSelectedItem().toString());			
+			stmt1.setInt(3, surgeryCost);
 			
 			int affected1 = stmt1.executeUpdate();
 			
@@ -338,6 +344,35 @@ public class RecordSurgeryPanel extends JPanel{
 			System.err.println(e);
 		}
 		
+	}
+	
+	public boolean isLowIncome(String patientName) throws SQLException{
+		String sql = "SELECT AnnualIncome FROM Patient WHERE PatientUsername = ?";
+		ResultSet rs = null;
+		boolean isLowincome = false;
+		try (PreparedStatement stmt = conn.prepareStatement(sql)){
+			
+			stmt.setString(1, patientName);
+			
+			rs = stmt.executeQuery();
+			System.out.println("Checking lowincome..."  );
+			if (rs.next()){
+				if (rs.getInt("AnnualIncome") < 25000) {
+					isLowincome = true;
+					System.out.println("patient is low income.");
+				}else{
+					System.out.println("patient is high income.");
+
+				}
+			
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e);
+		}
+		
+		
+		return isLowincome;
 	}
 	
 	

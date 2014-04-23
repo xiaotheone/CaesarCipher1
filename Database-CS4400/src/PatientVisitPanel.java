@@ -39,14 +39,12 @@ public class PatientVisitPanel extends JPanel{
 	private JTextField textField_2;
 	private JTextField systolicField;
 	private JTextField diastolicField;
-	private JTextField patientField1;
-	private JTextField patientField2;
 	private JComboBox comboVisit;
 	private int visitID = 0;
 	private JTextArea diagnosisArea;
-	private JButton btnRecordAVisit2;
 	private JButton btnSelect;
 	private JTextArea medicationArea;
+	private JComboBox comboPatient;
 
 	public PatientVisitPanel(){
 		
@@ -101,29 +99,28 @@ public class PatientVisitPanel extends JPanel{
 		
 		
 		JLabel lblPatientName = new JLabel("Patient Name");
-		lblPatientName.setBounds(6, 117, 95, 16);
+		lblPatientName.setBounds(18, 117, 95, 16);
 		add(lblPatientName);
 		
 		JLabel lblPatientPhone = new JLabel("Phone Number");
-		lblPatientPhone.setBounds(110, 117, 95, 16);
+		lblPatientPhone.setBounds(125, 117, 95, 16);
 		add(lblPatientPhone);
 		
 		JButton btnView1 = new JButton("View");
-		btnView1.setBounds(266, 135, 75, 29);
+		btnView1.setBounds(266, 144, 75, 29);
 		add(btnView1);
 
 		
 		JButton btnRecordAVisit1 = new JButton("Record a Visit");
 		btnRecordAVisit1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (patientField1.getText() != null){
-					String patientName = patientField1.getText().split(" ")[0] + patientField1.getText().split(" ")[1];
+				if (comboPatient.getSelectedItem().toString() != null){
 					removeAll();
-					add(new RecordVisitPanel(patientName));
+					add(new RecordVisitPanel(comboPatient.getSelectedItem().toString()));
 				}
 			}
 		});
-		btnRecordAVisit1.setBounds(353, 135, 114, 29);
+		btnRecordAVisit1.setBounds(353, 144, 114, 29);
 		add(btnRecordAVisit1);
 		
 		JLabel lblDateOfVisit_1 = new JLabel("Date of Visit");
@@ -179,24 +176,6 @@ public class PatientVisitPanel extends JPanel{
 		DefaultTableModel model = new DefaultTableModel(numRows, tableColumn.length) ;
 		model.setColumnIdentifiers(tableColumn);
 		
-		patientField1 = new JTextField();
-		patientField1.setBounds(6, 134, 248, 28);
-		add(patientField1);
-		patientField1.setColumns(10);
-		
-		patientField2 = new JTextField();
-		patientField2.setColumns(10);
-		patientField2.setBounds(6, 162, 248, 28);
-		add(patientField2);
-		
-		JButton btnView2 = new JButton("View");
-		btnView2.setBounds(266, 163, 75, 29);
-		add(btnView2);
-		
-		btnRecordAVisit2 = new JButton("Record a Visit");
-		btnRecordAVisit2.setBounds(353, 160, 114, 29);
-		add(btnRecordAVisit2);
-		
 		JLabel label = new JLabel("Date of Visit");
 		label.setBounds(26, 227, 82, 16);
 		add(label);
@@ -217,6 +196,10 @@ public class PatientVisitPanel extends JPanel{
 		JButton btnGoBack = new JButton("GO BACK");
 		btnGoBack.setBounds(29, 403, 95, 29);
 		add(btnGoBack);
+		
+		comboPatient = new JComboBox();
+		comboPatient.setBounds(6, 145, 227, 27);
+		add(comboPatient);
 		btnGoBack.addActionListener(new ActionListener() {
 
 			@Override
@@ -254,10 +237,10 @@ public class PatientVisitPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				if (patientField1.getText() != null) {
+				if (comboPatient.getSelectedItem().toString() != null) {
 						System.out.println("calling viewHistory method");
 					try {
-						visitID = viewHistory(patientField1.getText());
+						visitID = viewHistory(comboPatient.getSelectedItem().toString());
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						System.err.println(e1);
@@ -268,25 +251,42 @@ public class PatientVisitPanel extends JPanel{
 		});
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void searchPatient() throws SQLException{
 		
 		String SQL = "SELECT Name, HomePhone FROM Patient WHERE	Name = ? OR HomePhone = ?";
 		
+		List<String> list = new ArrayList<String>();
 		ResultSet rs = null;
+		String name = "";
+		String phone = "";
 		
 		try (PreparedStatement stmt = conn.prepareStatement(SQL)){
 			
-			stmt.setString(1, this.txtEnterName.getText());
-			stmt.setString(2, this.txtPhoneNumber.getText());
+			name = this.txtEnterName.getText();
+			phone = this.txtPhoneNumber.getText();
 			
-			rs = stmt.executeQuery();
+			if (name.length() == 0 && phone.length() == 0){
+				System.out.println("null name");
+				rs = stmt.executeQuery("SELECT Name, HomePhone FROM Patient");
+			}
+			else{
+				stmt.setString(1, name);
+				stmt.setString(2, phone);
+				rs = stmt.executeQuery();
+			}
 
 			while(rs.next()){
 
-				patientField1.setText(rs.getString("Name") + "     " + rs.getString("HomePhone"));
+				list.add(rs.getString("Name") + " -" + rs.getString("HomePhone"));
 				
 				System.out.println(rs.getString("Name") + rs.getString("HomePhone"));
 			}
+			
+			String[] temp = new String[list.size()];
+			list.toArray(temp);
+			comboPatient.setModel(new DefaultComboBoxModel(temp));
+			
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -307,7 +307,7 @@ public class PatientVisitPanel extends JPanel{
 		int ID = 0;
 		
 		String userNAMESQL = "SELECT PatientUsername FROM Patient WHERE Name = ?";
-		String SQL = "SELECT VisitID, DateofVisit From Visit	WHERE PatUsername  = ?";
+		String SQL = "SELECT VisitID, DateofVisit From Visit WHERE DocUsername = ? AND PatUsername  = ?";
 		
 		try (PreparedStatement stmt = conn.prepareStatement(userNAMESQL)){
 			
@@ -326,7 +326,9 @@ public class PatientVisitPanel extends JPanel{
 		
 		try (PreparedStatement stmt2 = conn.prepareStatement(SQL)){
 			
-			stmt2.setString(1, PatUsername);
+
+			stmt2.setString(1, currentDoctor.cd.getDoctorUsername());
+			stmt2.setString(2, PatUsername);
 			
 			rs1 = stmt2.executeQuery();
 			while(rs1.next()){

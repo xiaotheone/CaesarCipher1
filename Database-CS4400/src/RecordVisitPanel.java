@@ -39,9 +39,12 @@ public class RecordVisitPanel extends JPanel{
 	private JComboBox comboMonth;
 	private JComboBox comboDosage;
 	private JTextArea notesArea;
+	private String inputString = "";
+	private String patientName = "";
+	private String patientPhone = "";
 	
 	@SuppressWarnings("unchecked")
-	public RecordVisitPanel(final String patientName){
+	public RecordVisitPanel( String input){
 		
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
@@ -50,6 +53,11 @@ public class RecordVisitPanel extends JPanel{
 		}
 		setSize(550, 450);
 		setLayout(null);
+		
+		inputString = input;
+		patientName = inputString.split(" ")[0] + " " + inputString.split(" ")[1];
+		patientPhone = inputString.split("-")[1];
+		
 		
 		JLabel lblRecordAVisit = new JLabel("Record a Visit");
 		lblRecordAVisit.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
@@ -137,7 +145,7 @@ public class RecordVisitPanel extends JPanel{
 		lblPerDay.setBounds(206, 275, 61, 16);
 		add(lblPerDay);
 		
-		String[] monthList = {"1","2","3","4","5"};
+		String[] monthList = {"0","1","2","3","4","5"};
 		comboMonth = new JComboBox(monthList);
 		comboMonth.setBounds(142, 299, 52, 27);
 		add(comboMonth);
@@ -146,7 +154,7 @@ public class RecordVisitPanel extends JPanel{
 		lblMonth.setBounds(193, 303, 53, 16);
 		add(lblMonth);
 		
-		String[] dayList = {"5","10","15","20","25","30"};
+		String[] dayList = {"0","5","10","15","20","25","30"};
 		comboDay = new JComboBox(dayList);
 		comboDay.setBounds(258, 299, 52, 27);
 		add(comboDay);
@@ -171,9 +179,11 @@ public class RecordVisitPanel extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				// TODO Auto-generated method stub
 				try {
-					recordData(getPatientUsername(patientName));
+					String username = getPatientUsername(patientName, patientPhone);
+					recordData(username, isFirstVist(username));
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -206,17 +216,24 @@ public class RecordVisitPanel extends JPanel{
 		
 	}
 	
-	public String getPatientUsername(String patientName) throws SQLException{
+	public String getPatientUsername(String patientName, String patientPhone) throws SQLException{
 		
-		String sql = "SELECT PatientUsername FROM Patient WHERE Name = ?";
+		String sql = "SELECT PatientUsername FROM Patient WHERE Name = ? AND HomePhone = ?";
 		ResultSet rs = null;
-		
+		String username = "";
 		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 			
+			System.out.println(patientName + " " + patientPhone);
 			stmt.setString(1, patientName);
+			stmt.setString(2, patientPhone);
+			
+			
 			rs = stmt.executeQuery();
+			
 			if(rs.next()){
-				return rs.getString("PatientUsername");
+				System.out.println("Username: " + rs.getString("PatientUsername"));
+				username =  rs.getString("PatientUsername");
+				
 			}
 			
 		} catch (Exception e) {
@@ -224,15 +241,45 @@ public class RecordVisitPanel extends JPanel{
 			System.err.println(e);
 		}
 		
-		return null;
+		return username;
 	}
 	
-	public void recordData(String patusername) throws SQLException{
+	public boolean isFirstVist(String patientName) throws SQLException{
+		String sql = "SELECT VisitID FROM Visit WHERE PatUsername = ?";
+		
+		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, getPatientUsername(patientName, patientName));
+			System.out.println("Patient name in isfirstvisit: " + patientName);
+			ResultSet rs = null;
+			rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				System.out.println("Not the first visit");
+				return false;
+			} else {
+				System.out.println("its the first visit");
+
+				return true;
+			}
+
+		}
+			
+	}
+	public void recordData(String patusername, boolean isFirstVisit) throws SQLException{
 		//insert into visit table
-		String sql = "INSERT INTO Visit(DocUsername,PatUsername,DateofVisit,DiastolicPressure, SystolicPressure	) VALUES(?,?,?,?,?) ";
+		String sql = "INSERT INTO Visit(VisitID, DocUsername,PatUsername,DateofVisit,DiastolicPressure, SystolicPressure, BillingAmount) VALUES(?,?,?,?,?,?,?) ";
 		String sql2 = "INSERT INTO Visit_Diagnosis(VisitID, Diagnosis) VALUES(?,?)";
 		String sql3 = "SELECT VisitID FROM Visit";
 		String sql4 = "INSERT INTO Prescription VALUES(?,?,?,?,?,?)";
+		int visitAmount = 0;
+		
+		if(isFirstVisit){
+			System.out.println("setting amount to 80");
+			visitAmount =  80;
+		}else if (!isFirstVisit) {
+			System.out.println("setting amount to 100");
+			visitAmount = 100;
+		}
 		
 		ResultSet rs = null;
 		int lastID = -1;
@@ -249,15 +296,17 @@ public class RecordVisitPanel extends JPanel{
 				lastID = rs.getInt("VisitID") + 1;
 			}
 
-			System.out.println(lastID);
-			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
-			stmt.setString(2, getPatientUsename(patiennameField.getText()));
-			stmt.setString(3, visitdateField.getText());
-			stmt.setString(4, diastolicField.getText());
-			stmt.setString(5, systolicField.getText());
+			System.out.println("lastID: " + lastID);
+			stmt.setInt(1, lastID);
+			stmt.setString(2, currentDoctor.cd.getDoctorUsername());
+			stmt.setString(3, getPatientUsername(patientName, patientPhone));
+			stmt.setString(4, visitdateField.getText());
+			stmt.setString(5, diastolicField.getText());
+			stmt.setString(6, systolicField.getText());
+			stmt.setInt(7, visitAmount);
+			
 			
 			if (lastID != -1) {
-				System.out.println("set stmt2");
 				stmt2.setInt(1, lastID);
 				stmt2.setString(2, diagnosisArea.getText());
 				stmt4.setInt(1, lastID);
@@ -294,20 +343,7 @@ public class RecordVisitPanel extends JPanel{
 	
 	
 	
-	public String getPatientUsename(String name) throws SQLException {
 
-		String SQL = "SELECT PatientUsername FROM Patient WHERE name = ?";
-		String s = "";
-		try (PreparedStatement stmt = conn.prepareStatement(SQL);) {
-			stmt.setString(1, name);
-			ResultSet rs = stmt.executeQuery();
-			rs.next();
-			s = rs.getString("PatientUsername");
-		}
-
-		return s;
-
-	}
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(image, 0, 0, null);
