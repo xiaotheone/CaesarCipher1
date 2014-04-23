@@ -131,51 +131,88 @@ public class ViewAppointmentPanel extends JPanel{
 	public void viewCurrentDate() throws SQLException{
 		
 		String SQL = "SELECT PatientUsername , Time FROM Appointments WHERE	DocUsername = ? AND Date = ?";
+		String sql1 = "SELECT Name FROM Patient WHERE PatientUsername = ?";
+		String patientName ="";
+
 		ResultSet rs = null;
-		
+		ResultSet rs1 = null;
+
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		String currentDate = dateFormat.format(date).toString();
 
 		
-		try (PreparedStatement stmt = conn.prepareStatement(SQL)){
+		try (PreparedStatement stmt = conn.prepareStatement(SQL);
+				PreparedStatement stmt1 = conn.prepareStatement(sql1)){
 			
 			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
 			stmt.setString(2, currentDate);
-			rs = stmt.executeQuery();			
-			
-			if (!rs.next()){
+			rs = stmt.executeQuery();
+
+			textArea.setText("");
+			if (!rs.next()) {
 				textArea.append("No Appointment today!");
 			}
-			while(rs.next()) {
-				
-				textArea.append("Patient Name: " + rs.getString("PatientUsername") +" || " + "Scheduled Time: " + rs.getString("Time") +"\n");
-			} 
 			
+			while (rs.next()) {
+				stmt1.setString(1, rs.getString("PatientUsername"));
+				rs1 = stmt1.executeQuery();
+				if (rs1.next()) {
+
+					patientName = rs1.getString("Name");
+				} else {
+					System.out.println("cant find the patient name");
+				}
+				textArea.append("Patient Name: "
+						+ rs.getString("PatientUsername") + " || "
+						+ "Scheduled Time: " + rs.getString("Time") + "\n");
+			}
+
 		} catch (Exception e) {
 			// TODO: handle exception
 			System.err.println(e);
 		}
-		
+
 	}
 	
 	public boolean getAppment() throws SQLException{
 		
 		String SQL = "SELECT PatientUsername , Time FROM Appointments WHERE	DocUsername = ? AND Date = ?";
+		String sql1 = "SELECT Name FROM Patient WHERE PatientUsername = ?";
 		ResultSet rs = null;
+		ResultSet rs1 = null;
+		String patientName ="";
+		
 		date = comboYear.getSelectedItem().toString() +"-"+ comboMonth.getSelectedItem().toString() + "-" + comboDay.getSelectedItem().toString();
 
 		
-		try (PreparedStatement stmt = conn.prepareStatement(SQL)){
+		try (PreparedStatement stmt = conn.prepareStatement(SQL);
+				PreparedStatement stmt1 = conn.prepareStatement(sql1)){
 			
 			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
 			stmt.setString(2, date);
-			
-			rs = stmt.executeQuery();
 						
+			rs = stmt.executeQuery();
+			
+			if (!rs.next()){
+				textArea.setText("");
+				textArea.append("No Appointment today!");
+			}
+			
+			textArea.setText("");
+
 			while(rs.next()) {
 				
-				textArea.append("Patient Name: " + rs.getString("PatientUsername") +" || " + "Scheduled Time: " + rs.getString("Time") +"\n");
+				stmt1.setString(1, rs.getString("PatientUsername"));
+				rs1 = stmt1.executeQuery();
+				if(rs1.next()){
+					
+					patientName = rs1.getString("Name");
+				}else{
+					System.out.println("cant find the patient name");
+				}
+				System.out.println(patientName);
+				textArea.append("Patient Name: " + patientName +" || " + "Scheduled Time: " + rs.getString("Time") +"\n");
 			} 
 			
 		} catch (Exception e) {
