@@ -317,25 +317,39 @@ public class LoginPanel extends JPanel {
 	 * @param password	 input password
 	 */
 	protected boolean userRegistration(String newName, String password) throws SQLException{
+		
 		String SQL = "INSERT into User VALUES (?, ?)";
+		String sql1 = "SELECT Username From User WHERE Username = ?";
 		ResultSet rs = null;
 		
-		try(PreparedStatement stmt = conn.prepareStatement(SQL);) {
+		try(PreparedStatement stmt = conn.prepareStatement(SQL);
+				PreparedStatement stmt1 = conn.prepareStatement(sql1)) {
 			
 			//setting variables
 			stmt.setString(1, newName);
 			stmt.setString(2, password);
 			
-			int affected = stmt.executeUpdate();
-			
-			if (affected == 1) {
-				System.out.println("data successful import");
-				return true;
-			} else {
-				System.err.println("no row affected!!");
+			stmt1.setString(1, newName);
+			rs = stmt1.executeQuery();
+					
+			if (rs.next()){
+				JOptionPane.showMessageDialog(getParent(), "user name have been taken.");
 				return false;
 			}
+			else{
+				int affected = stmt.executeUpdate();
+
+				if (affected == 1) {
+					System.out.println("data successful import");
+					return true;
+				} else {
+					System.err.println("no row affected!!");
+					return false;
+				}
+			}
 			
+			
+
 		} catch (SQLException e) {
 			// TODO: handle exception
 			System.err.println(e);

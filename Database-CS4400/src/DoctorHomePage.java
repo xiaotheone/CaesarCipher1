@@ -127,8 +127,10 @@ public class DoctorHomePage extends JPanel{
 		btnEditeProfile.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				removeAll();
+				DoctorProfilePanel dp = new DoctorProfilePanel();
+				dp.edited = 1;
 				try {
-					add(new DoctorProfilePanel());
+						add(dp);
 				} catch (Exception e2) {
 					// TODO: handle exception
 					e2.printStackTrace();

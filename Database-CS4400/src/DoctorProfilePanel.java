@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 
 import javax.imageio.ImageIO;
+import javax.naming.spi.DirStateFactory.Result;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -28,7 +29,7 @@ import javax.swing.JComboBox;
 public class DoctorProfilePanel extends JPanel{
 	
 	private static Connection conn = ConnectionManager.getInstance().getConnection();
-
+	public int edited = 0;
 	private JTextField licenseField;
 	private JTextField firstnameField;
 	private JTextField lasenameField;
@@ -40,6 +41,7 @@ public class DoctorProfilePanel extends JPanel{
 	JComboBox comboFrom ;
 	JComboBox comboTo;
 	JComboBox comboWeekday;
+
 	
 	public static BufferedImage image;
 
@@ -210,56 +212,91 @@ public class DoctorProfilePanel extends JPanel{
 		
 	}
 	
-	public boolean createDoctorProfile() throws SQLException{
+	public void createDoctorProfile() throws SQLException{
 		
-		String SQL = "INSERT INTO Doctor(DocUsername, LicenseNo, Fname, Lname, DOB, WorkPhone, HomeAddress, Specialty, RoomNo) VALUES (?,?,?,?,?,?,?,?,?)";
-		String SQL2 = "INSERT INTO Doctor_Availability (DocUserName, To, From, Day) VALUES (?,?,?,?)";
-		ResultSet rs =null;
-
-		try (PreparedStatement stmt = conn.prepareStatement(SQL);){
+		String SQL2 = "INSERT INTO Doctor_Availability VALUES (?,?,?,?)";
+		
+		if (edited == 0){
 			
-			System.out.println("username: " + currentDoctor.cd.getDoctorUsername());
-			System.out.println("From timeL " + this.comboTo.getSelectedItem().toString());
+			String SQL = "INSERT INTO Doctor(DocUsername, LicenseNo, Fname, Lname, DOB, WorkPhone, HomeAddress, Specialty, RoomNo) VALUES (?,?,?,?,?,?,?,?,?)";
+			ResultSet rs =null;
 			
-			stmt.setString(1, currentDoctor.cd.getDoctorUsername());
-			stmt.setInt(2, Integer.parseInt(this.licenseField.getText()));
-			stmt.setString(3, this.firstnameField.getText());
-			stmt.setString(4, this.lasenameField.getText());
-			stmt.setString(5, this.birthdateField.getText());
-			stmt.setString(6,this.workphoneField.getText());
-			stmt.setString(7, this.addressField.getText());
-			stmt.setString(8, this.comboBoxSpeciatlty.getSelectedItem().toString());
-			stmt.setInt(9, Integer.parseInt(this.roombumberField.getText()));
-			
-			//check above data been update or not
-			int affected = stmt.executeUpdate();
-			
-			try (PreparedStatement stmt2 = conn.prepareStatement(SQL2);){
+			try (PreparedStatement stmt = conn.prepareStatement(SQL);){
 				
-				stmt2.setString(1, currentDoctor.cd.getDoctorUsername());
-				stmt2.setString(2, this.comboTo.getSelectedItem().toString());
-				stmt2.setString(3, this.comboFrom.getSelectedItem().toString());
-				stmt2.setString(4, this.comboWeekday.getSelectedItem().toString());
+				System.out.println("username: " + currentDoctor.cd.getDoctorUsername());
+				System.out.println("From timeL " + this.comboTo.getSelectedItem().toString());
 				
-				int affected2 = stmt2.executeUpdate();
-				if (affected2 == 2) {
-					System.out.println("Avaliable time imported.");
+				stmt.setString(1, currentDoctor.cd.getDoctorUsername());
+				stmt.setInt(2, Integer.parseInt(this.licenseField.getText()));
+				stmt.setString(3, this.firstnameField.getText());
+				stmt.setString(4, this.lasenameField.getText());
+				stmt.setString(5, this.birthdateField.getText());
+				stmt.setString(6,this.workphoneField.getText());
+				stmt.setString(7, this.addressField.getText());
+				stmt.setString(8, this.comboBoxSpeciatlty.getSelectedItem().toString());
+				stmt.setInt(9, Integer.parseInt(this.roombumberField.getText()));
+				
+				//check above data been update or not
+				int affected = stmt.executeUpdate();
+				
+				
+				if (affected == 1) {
+					System.out.println("data successful import");
 				} else {
-					System.out.println("Avaliable time not imported.");
+					System.err.println("no row affected!!");
 				}
+				
+			}
+		}
+		
+		if(edited == 1){
+			String sql = "UPDATE Doctor SET LicenseNo = ?, Fname = ?, Lname = ?, DOB = ?, WorkPhone = ?, HomeAddress = ?, Specialty = ?, RoomNo = ? WHERE DocUsername = ?";
+			ResultSet rs = null;
+			
+			try(PreparedStatement stmt = conn.prepareStatement(sql)) {
+				stmt.setInt(1, Integer.parseInt(this.licenseField.getText()));
+				stmt.setString(2, this.firstnameField.getText());
+				stmt.setString(3, this.lasenameField.getText());
+				stmt.setString(4, this.birthdateField.getText());
+				stmt.setString(5,this.workphoneField.getText());
+				stmt.setString(6, this.addressField.getText());
+				stmt.setString(7, this.comboBoxSpeciatlty.getSelectedItem().toString());
+				stmt.setInt(8, Integer.parseInt(this.roombumberField.getText()));
+				stmt.setString(9, currentDoctor.cd.getDoctorUsername());
+				
+				int affected = stmt.executeUpdate();
+
+				if (affected == 1) {
+					System.out.println("data successful import");
+				
+				} else {
+					System.err.println("no row affected!!");
+				
+				}
+				
 			} catch (Exception e) {
 				// TODO: handle exception
 				System.err.println(e);
 			}
-			if (affected == 1) {
-				System.out.println("data successful import");
-				return true;
-			} else {
-				System.err.println("no row affected!!");
-				return false;
-			}
+		}
+		
+		try (PreparedStatement stmt2 = conn.prepareStatement(SQL2);){
 			
-		} 
+			stmt2.setString(1, currentDoctor.cd.getDoctorUsername());
+			stmt2.setString(2, this.comboTo.getSelectedItem().toString());
+			stmt2.setString(3, this.comboFrom.getSelectedItem().toString());
+			stmt2.setString(4, this.comboWeekday.getSelectedItem().toString());
+			
+			int affected2 = stmt2.executeUpdate();
+			if (affected2 == 1) {
+				System.out.println("Avaliable time imported.");
+			} else {
+				System.out.println("Avaliable time not imported.");
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e);
+		}
 	}
 	
 	public boolean  importTime() throws SQLException{
