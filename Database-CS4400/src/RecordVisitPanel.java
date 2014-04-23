@@ -190,10 +190,7 @@ public class RecordVisitPanel extends JPanel{
 				}
 			}
 		});
-		
-		JButton btnNewButton = new JButton("Add prescription");
-		btnNewButton.setBounds(237, 415, 117, 29);
-		add(btnNewButton);
+
 		
 		JButton btnGoBack = new JButton("GO BACK");
 		btnGoBack.setBounds(6, 415, 96, 29);
@@ -340,6 +337,7 @@ public class RecordVisitPanel extends JPanel{
 		}
 		
 	}
+	
 	
 	
 	
