@@ -14,6 +14,8 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * 
@@ -64,6 +66,17 @@ public class AdminPatientVisitReportPanel extends JPanel{
 		});
 		btnGenerateReport.setBounds(391, 403, 153, 29);
 		add(btnGenerateReport);
+		
+		JLabel lblBack = new JLabel("Back");
+		lblBack.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				removeAll();
+				add(new AdminHomepage());
+			}
+		});
+		lblBack.setBounds(36, 408, 61, 16);
+		add(lblBack);
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {

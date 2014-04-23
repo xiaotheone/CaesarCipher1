@@ -14,6 +14,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * 
@@ -60,6 +62,17 @@ public class CreateBillPanel extends JPanel{
 		
 		btnCreateBill.setBounds(357, 68, 116, 29);
 		add(btnCreateBill);
+		
+		JLabel lblBack = new JLabel("Back");
+		lblBack.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				removeAll();
+				add(new AdminHomepage());
+			}
+		});
+		lblBack.setBounds(23, 415, 61, 16);
+		add(lblBack);
 		try {
 			image = ImageIO.read(new File("Images/buzz.png"));
 		} catch (IOException e) {
