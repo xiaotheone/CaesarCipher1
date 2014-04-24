@@ -328,6 +328,7 @@ public class PatientMakeAppointmentPanel extends JPanel{
 			}
 
 			if (s.equalsIgnoreCase("0")) {
+				System.out.println("avilable");
 				return true;
 			} else if (s.equalsIgnoreCase("1")) {
 				return false;

@@ -100,6 +100,12 @@ public class AdminHomepage extends JPanel{
 		JButton btnNewButton_1 = new JButton("Close");
 		btnNewButton_1.setBounds(405, 386, 117, 29);
 		add(btnNewButton_1);
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				removeAll();
+				add(new LoginPanel());
+			}
+		});
 		
 		
 		try {

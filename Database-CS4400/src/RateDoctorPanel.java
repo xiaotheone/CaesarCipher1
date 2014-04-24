@@ -156,7 +156,7 @@ public class RateDoctorPanel extends JPanel{
 	
 	public String[] doctorList() throws SQLException {
 		List<String> nameList = new ArrayList<String>();
-		String SQL = "SELECT Lname FROM Doctor, Visit WHERE Visit.DocUsername = Doctor.DocUsername	AND PatUsername =?";
+		String SQL = "SELECT DISTINCT Lname FROM Doctor, Visit WHERE Visit.DocUsername = Doctor.DocUsername	AND PatUsername =?";
 
 		try (PreparedStatement stmt = conn.prepareStatement(SQL);) {
 			stmt.setString(1, currentPatient.cp.getPatientUsername());

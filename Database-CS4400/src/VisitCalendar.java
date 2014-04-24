@@ -62,7 +62,7 @@ public class VisitCalendar extends JPanel{
 		comboMonth.setBounds(103, 67, 109, 27);
 		add(comboMonth);
 		
-		JLabel lblYear = new JLabel("Year：");
+		JLabel lblYear = new JLabel("Year");
 		lblYear.setBounds(224, 72, 40, 16);
 		add(lblYear);
 		
