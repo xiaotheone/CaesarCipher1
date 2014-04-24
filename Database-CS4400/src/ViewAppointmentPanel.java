@@ -57,7 +57,7 @@ public class ViewAppointmentPanel extends JPanel {
 		lblSelcetDate.setBounds(75, 97, 84, 24);
 		add(lblSelcetDate);
 
-		String[] day = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+		String[] day = { "","1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
 				"11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
 				"21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
 				"31" };
@@ -104,7 +104,20 @@ public class ViewAppointmentPanel extends JPanel {
 				}
 			}
 		});
-
+	
+		JButton btnViewCalendar = new JButton("View Calendar");
+		btnViewCalendar.setBounds(420, 129, 117, 29);
+		add(btnViewCalendar);
+		btnViewCalendar.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				removeAll();
+				add(new VisitCalendar());
+			}
+		});
+		
 		JButton btnGoBack = new JButton("GO BACK");
 		btnGoBack.setBounds(75, 371, 100, 29);
 		add(btnGoBack);
