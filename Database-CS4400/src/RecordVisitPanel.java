@@ -81,12 +81,11 @@ public class RecordVisitPanel extends JPanel{
 		add(lblNewLabel);
 		
 		visitdateField = new JTextField();
-		visitdateField.setEditable(false);
+		visitdateField.setEditable(true);
 		visitdateField.setBounds(134, 77, 134, 28);
 		add(visitdateField);
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
-		System.out.println(dateFormat.format(date).toString());
 		visitdateField.setText(dateFormat.format(date).toString());
 		visitdateField.setColumns(10);
 		
@@ -269,6 +268,8 @@ public class RecordVisitPanel extends JPanel{
 		String sql3 = "SELECT VisitID FROM Visit";
 		String sql4 = "INSERT INTO Prescription VALUES(?,?,?,?,?,?)";
 		int visitAmount = 0;
+		String pName = getPatientUsername(patientName, patientPhone);
+		String dName = currentDoctor.cd.getDoctorUsername();
 		
 		if(isFirstVisit){
 			System.out.println("setting amount to 80");
@@ -326,6 +327,7 @@ public class RecordVisitPanel extends JPanel{
 			
 			if (affected == 1 && affected2 == 1 && affected3 == 1) {
 				System.out.println("data imported.");
+				deleteAppointment(dName, pName);
 				JOptionPane.showMessageDialog(getParent(), "data imported");
 			} else {
 				System.out.println("data  not imported.");
@@ -340,7 +342,28 @@ public class RecordVisitPanel extends JPanel{
 	
 	
 	
-	
+	public void deleteAppointment(String dUsername, String pUsername){
+		
+		String SQL = "DELETE FROM Appointments WHERE DocUsername = ? AND PatientUsername = ? ";
+		
+			try (PreparedStatement stmt = conn.prepareStatement(SQL)){
+				
+				stmt.setString(1, dUsername);
+				stmt.setString(2, pUsername);
+				
+				int affected = stmt.executeUpdate();
+				if (affected == 1){
+					System.out.println("data affected, appoinment deleted.");
+				}else{
+					System.out.println("data not affected, appointment not deleted.");
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				System.err.println(e);
+			}
+		
+	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
