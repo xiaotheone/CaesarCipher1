@@ -273,10 +273,18 @@ public class RecordVisitPanel extends JPanel{
 		
 		if(isFirstVisit){
 			System.out.println("setting amount to 80");
+			
 			visitAmount =  200;
+			if(isLowIncome( getPatientUsername(patientName, patientPhone))){
+				visitAmount = 160;
+			}
 		}else if (!isFirstVisit) {
 			System.out.println("setting amount to 100");
+			
 			visitAmount = 150;
+			if(isLowIncome( getPatientUsername(patientName, patientPhone))){
+				visitAmount = 120;
+			}
 		}
 		
 		ResultSet rs = null;
@@ -340,7 +348,34 @@ public class RecordVisitPanel extends JPanel{
 		
 	}
 	
-	
+	public boolean isLowIncome(String patientName) throws SQLException{
+		String sql = "SELECT AnnualIncome FROM Patient WHERE PatientUsername = ?";
+		ResultSet rs = null;
+		boolean isLowincome = false;
+		try (PreparedStatement stmt = conn.prepareStatement(sql)){
+			
+			stmt.setString(1, patientName);
+			
+			rs = stmt.executeQuery();
+			System.out.println("Checking lowincome..."  );
+			if (rs.next()){
+				if (rs.getInt("AnnualIncome") < 25000) {
+					isLowincome = true;
+					System.out.println("patient is low income.");
+				}else{
+					System.out.println("patient is high income.");
+
+				}
+			
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.err.println(e);
+		}
+		
+		
+		return isLowincome;
+	}
 	
 	public void deleteAppointment(String dUsername, String pUsername){
 		
