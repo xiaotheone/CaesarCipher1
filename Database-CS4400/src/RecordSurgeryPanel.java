@@ -130,7 +130,7 @@ public class RecordSurgeryPanel extends JPanel{
 		CPTField.setBounds(114, 273, 114, 28);
 		add(CPTField);
 		
-		String[] precedure = {"General Physician", "Heart Specialist", "Eye physician", "Orthopedics", "Psychiatry", "Gynecologist"};
+		String[] precedure = {"Brain Injury", "Child Abuse Pediatrics", "Cardiac Surgery", "Orthotic Fitting", "Psychiatry", "Gynecologist"};
 
 		comboProcedure = new JComboBox(precedure);
 		comboProcedure.setBounds(114, 247, 114, 27);
