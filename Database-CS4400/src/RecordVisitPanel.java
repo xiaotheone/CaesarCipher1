@@ -273,10 +273,10 @@ public class RecordVisitPanel extends JPanel{
 		
 		if(isFirstVisit){
 			System.out.println("setting amount to 80");
-			visitAmount =  80;
+			visitAmount =  200;
 		}else if (!isFirstVisit) {
 			System.out.println("setting amount to 100");
-			visitAmount = 100;
+			visitAmount = 150;
 		}
 		
 		ResultSet rs = null;
